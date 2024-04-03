@@ -14,7 +14,7 @@ dining_halls = ['berkshire', 'worcester', 'franklin', 'hampshire']
 # Open a CSV file to write the data
 with open('menu_nutritional_info.csv', mode='w', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(['Food Item', 'Calories', 'Protein (g)', 'Fats (g)', 'Dining Hall'])
+    writer.writerow(['Food Item', 'Calories', 'Protein (g)', 'Fats (g)', 'Allergens', 'Dining Hall'])
 
     for hall in dining_halls:
 
@@ -40,9 +40,11 @@ with open('menu_nutritional_info.csv', mode='w', newline='') as file:
             calories = item.get('data-calories')
             protein = item.get('data-protein')
             fats = item.get('data-total-fat')
+            allergens = item.get('data-allergens')
+
 
             # Write the extracted information to the CSV file
-            writer.writerow([food_name, calories, protein, fats, hall])
+            writer.writerow([food_name, calories, protein, fats, allergens, hall])
 
 # Close the browser
 driver.quit()
