@@ -21,6 +21,7 @@ This includes implementing functionalities such as:
 Once we have implemented these features, we will focus more on enhancing user experience by adding features such as:
 
 - Meal suggestions: Personalized meal suggestions based on users' nutritional goals, preferences, and dining hall offerings
+- Meal history: Allow users to view previous meals they have logged
 - Additional nutritional goal tracking: Allow users to track more than just basic calorie consumption and hydration, such as tracking macros and specific nutrient intake
 - Enhanced Data Visualization: Improve visualization of user progress over time, including weight and calorie consumption trends, through interactive graphs and charts
 - User reviews on meals: Allow users to leave reviews and ratings for meals they have consumed, as well as providing direct feedback to other users and UMass Dining
