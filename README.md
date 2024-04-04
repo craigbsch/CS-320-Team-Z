@@ -9,21 +9,26 @@ This project is not yet usable, as it is under development. Once finished a user
 ## Roadmap 
 
 Our first major goal is to get this into basic running shape, namely having user accounts, web scraping for the menu and basic nutritional fact tracking.
+This includes implementing functionalities such as:
 
-Other features we have discussed adding if we have the time:
+- Account creation
+- Login/Logout
+- User Profile management: Allowing users to manage account information such as name, password, meal plan preferences, and dietary restrictions
+- Menu Display: Implementing a display of menus from dining halls, with options to filter by meal type, allergens, and preferences
+- Meal tracking: Allowing users to select meals they have consumed from various menus and log them into their daily intake
+- Goal tracking: Allowing users to track goals for basic calorie consumption and hydration, based on logged meals
 
-Menu Display,
+Once we have implemented these features, we will focus more on enhancing user experience by adding features such as:
 
-Additional nutritional goal tracking,
-
-Meal suggestions,
-
-User reviews on meals,
+- Meal suggestions: personalized meal suggestions based on users' nutritional goals, preferences, and dining hall offerings
+- Additional nutritional goal tracking: Allowing users to track more than just basic calorie consumption and hydration, such as tracking macros and specific nutrient intake
+- Enhanced Data Visualization: Improving visualization of user progress over time, including weight and calorie consumption trends, through interactive graphs and charts
+- User reviews on meals: Allowing users to leave reviews and ratings for meals they have consumed, as well as providing direct feedback to other users and UMass Dining
 
 
 ## Contributing
 
-This is a school project so contributions outside the team will not be accepted
+This is a school project so contributions outside the team will not be accepted. However, we appreciate feedback and suggestions for improvement from stakeholders and users.
 
 ## Team
 Team members:
