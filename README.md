@@ -8,7 +8,7 @@ This project is not yet usable, as it is under development. Once finished a user
 
 ## Roadmap 
 
-Our first major goal is to get this into basic running shape, namely having user accounts tied to the UMass one login, adding meals, web scraping for the menu and basic nutritional fact tracking.
+Our first major goal is to get this into basic running shape, namely having user accounts, web scraping for the menu and basic nutritional fact tracking.
 
 Other features we have discussed adding if we have the time:
 
