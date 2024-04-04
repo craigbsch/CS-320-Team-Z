@@ -5,9 +5,11 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 
 const NavBar = () => {
 	return (
-		<Navbar expand='lg' className='bg-body-tertiary'>
-			<Container>
-				<Navbar.Brand>Nutrition Calc </Navbar.Brand>
+		<Navbar style={{ backgroundColor: "#6C1515" }}>
+			<Container style={{ display: "flex", justifyContent: "center" }}>
+				<Navbar.Brand>
+					<h1 style={{ color: "white" }}>Nutrition Calc</h1>
+				</Navbar.Brand>
 			</Container>
 		</Navbar>
 	);
