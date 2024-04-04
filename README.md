@@ -1,10 +1,10 @@
 # UMass Nutritional Tracker 
 
-UMass Nutritional Tracker is a Web app in construction. The finalized version will allow users to set basic nutrition goals. In addition a user may add meals from UMass dining halls.
+UMass Nutritional Tracker is a Webapp in construction. An improved version of the UMass Dining app, this seeks to be the premier app for students accessing dining information. It is constructed by web-scraping the dining site, and then filtering the data into a usable form for our users.
 
 ## Usage
 
-Currently this project is not usable as it is under development. Once finished a user should be able to login with UMass credentials, setup nutritional goals, and add meals to update the goals as well as look at progress. This is the most basic usable form. See roadmap for additional features we are considering.
+This project is not yet usable, as it is under development. Once finished a user should be able to login and create an account, setup nutritional goals, and add meals to update the goals as well as look at progress in a graph form (viewing their weight and calorie consumption over time, as well as other macronutrients). This is the most basic usable form. See roadmap for additional features we are considering.
 
 ## Roadmap 
 
