@@ -1,7 +1,7 @@
 import React from 'react';
 //can change any of this. very rough
 
-const FoodItem = ({ meal, onSelect, onRemove, isSelected }) => {
+const FoodItem = ({ food, onSelect, onRemove, isSelected }) => {
   return (
     <li>
       <span>{food.name}</span>
