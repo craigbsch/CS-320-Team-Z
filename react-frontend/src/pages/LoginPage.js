@@ -1,6 +1,6 @@
 import Login from "../components/Login.js";
-const Home = () => {
+const LoginPage = () => {
 	return <Login />;
 };
 
-export default Home;
+export default LoginPage;
