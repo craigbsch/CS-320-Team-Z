@@ -1,3 +1,5 @@
-fastapi-backend/venv/
+fastapi-backend/docker-scraper/venv/
 fastapi-backend/dbInfo.env
 fastapi-backend/.dbInfo.env.swp
+fastapi-backend/docker-scraper/dbInfoDocker.env
+fastapi-backend/docker-scraper/.dbInfoDocker.env.swp
