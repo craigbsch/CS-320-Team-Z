@@ -10,6 +10,11 @@ from selenium.webdriver.support.ui import Select
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 from datetime import datetime
+from selenium.webdriver.chrome.options import Options
+
+
+
+print("Test")
 
 
 # Get the path to the directory this file's parent is in
@@ -25,9 +30,22 @@ DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
 DATABASE_NAME = os.getenv('DATABASE_NAME')
 DATABASE_MEAL_TABLE = os.getenv('DATABASE_MEAL')
 
+print("Test2")
 
-# Setup Chrome with Selenium WebDriver
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+
+chrome_options = Options()
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--headless")  # don't need a GUI
+chrome_options.add_argument("--disable-dev-shm-usage")
+print("Test3")
+
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+#driver = webdriver.Chrome(options=chrome_options)
+print("Test4")
+
+
+# # Setup Chrome with Selenium WebDriver
+# driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 dining_halls = ['berkshire', 'worcester', 'franklin', 'hampshire']
 # Connect to the database
@@ -117,4 +135,6 @@ finally:
     # Close the database connection
     connection.close()
     # Close the browser
+    driver.stop_client() # ensures process fully closes
+    driver.close()
     driver.quit()
