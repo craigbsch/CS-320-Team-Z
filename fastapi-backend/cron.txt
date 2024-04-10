@@ -1,1 +1,2 @@
 cron for running scheduled scrape in azure job
+0 0 * * 0
