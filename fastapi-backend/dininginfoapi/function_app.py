@@ -33,6 +33,14 @@ app.add_middleware(
 
 
 def get_db_connection():
+
+    """Establishes a database connection using pymysql.
+    
+    Returns:
+        pymysql.connections.Connection: A pymysql connection object.
+    """
+
+
     return pymysql.connect(
         port=3306,
         host = DATABASE_URL,
@@ -44,7 +52,17 @@ def get_db_connection():
     )
 
 @app.get('/menu')
-async def get_menu(dining_hall: str = Query(...), date_served: str = Query(...)):  # Added dining_hall as a query parameter with a default value
+async def get_menu(dining_hall: str = Query(...), date_served: str = Query(...)): 
+
+    """Fetches menu information from the database.
+    
+    Args:
+        dining_hall (str): The name of the dining hall. Required query parameter.
+        date_served (str): The date for which menu is being queried. Required query parameter.
+    
+    Returns:
+        list[dict]: A list of meal information dictionaries.
+    """
     with get_db_connection().cursor() as cursor:
         sql = 'SELECT * FROM meal_info WHERE dining_hall=%s AND date_served=%s'
         cursor.execute(sql, (dining_hall, date_served))  # Note the comma to make it a tuple
@@ -53,6 +71,11 @@ async def get_menu(dining_hall: str = Query(...), date_served: str = Query(...))
 
 @app.get("/testdb")
 async def test_db_connection():
+    """Tests the database connection.
+    
+    Returns:
+        dict: A dictionary indicating the success or failure of the connection attempt.
+    """
     try:
         connection = get_db_connection()
         with connection.cursor() as cursor:
