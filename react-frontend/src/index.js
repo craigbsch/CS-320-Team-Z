@@ -5,6 +5,7 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./pages/Layout";
 import LoginPage from "./pages/LoginPage";
+import ViewMenuPage from "./pages/ViewMenuPage";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -14,6 +15,7 @@ root.render(
 			<Routes>
 				<Route path='/' element={<Layout />}>
 					<Route index element={<LoginPage />} />
+					<Route path='viewMenu' element={<ViewMenuPage />} />
 				</Route>
 			</Routes>
 		</BrowserRouter>
