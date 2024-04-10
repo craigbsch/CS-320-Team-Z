@@ -7,18 +7,22 @@ import Layout from "./pages/Layout";
 import LoginPage from "./pages/LoginPage";
 import ViewMenuPage from "./pages/ViewMenuPage";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Provider } from "react-redux";
+import { store } from "./redux/store.js";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
 	<React.StrictMode>
-		<BrowserRouter>
-			<Routes>
-				<Route path='/' element={<Layout />}>
-					<Route index element={<LoginPage />} />
-					<Route path='viewMenu' element={<ViewMenuPage />} />
-				</Route>
-			</Routes>
-		</BrowserRouter>
+		<Provider store={store}>
+			<BrowserRouter>
+				<Routes>
+					<Route path='/' element={<Layout />}>
+						<Route index element={<LoginPage />} />
+						<Route path='viewMenu' element={<ViewMenuPage />} />
+					</Route>
+				</Routes>
+			</BrowserRouter>
+		</Provider>
 	</React.StrictMode>
 );
 
