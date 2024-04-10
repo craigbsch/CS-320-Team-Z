@@ -1,14 +1,10 @@
 from fastapi import FastAPI, Query
-from typing import List, Optional
 import pymysql.cursors
 from fastapi.middleware.cors import CORSMiddleware
-import boto3
-import json
-import base64
-import requests
-import httpx
 from dotenv import load_dotenv
 import os
+import azure.functions as func
+
 
 # Load environment variables from .env file
 # Get the path to the directory this file's parent is in
@@ -25,15 +21,15 @@ DATABASE_NAME = os.getenv('DATABASE_NAME')
 DATABASE_MEAL_TABLE = os.getenv('DATABASE_MEAL')
 app = FastAPI()
 
-# CORS setup, adjusted to include your actual website
-# origins = ["*"]
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+#CORS setup
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def get_db_connection():
@@ -65,3 +61,7 @@ async def test_db_connection():
         return {"success": True, "result": result}
     except Exception as e:
         return {"success": False, "error": str(e)}
+
+
+
+app = func.AsgiFunctionApp(app=app, http_auth_level=func.AuthLevel.ANONYMOUS)

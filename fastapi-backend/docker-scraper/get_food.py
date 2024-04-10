@@ -14,10 +14,10 @@ from selenium.webdriver.chrome.options import Options
 
 
 # Get the path to the directory this file's parent is in
-BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
 
 # Join the path with env file
-load_dotenv(os.path.join(BASEDIR, 'dbInfo.env'))
+load_dotenv(os.path.join(BASEDIR, 'dbInfoDocker.env'))
 
 # Database connection details from environment variables
 DATABASE_URL = os.getenv('DATABASE_URL')
