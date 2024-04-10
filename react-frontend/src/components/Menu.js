@@ -8,8 +8,8 @@ const Menu = () => {
 
 	return (
 		<ListGroup variant='flush'>
-			{menuItems.map((item) => (
-				<ListGroup.Item>{item.meal_name}</ListGroup.Item>
+			{menuItems.map((item, i) => (
+				<ListGroup.Item key={i}>{item.meal_name}</ListGroup.Item>
 			))}
 		</ListGroup>
 	);
