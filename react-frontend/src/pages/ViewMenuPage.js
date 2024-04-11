@@ -8,12 +8,13 @@ import { setMenu } from "../redux/menuSlice";
 import DaySelector from "../components/DaySelector";
 
 const ViewMenuPage = () => {
-	const [hall, setHall] = useState("Select hall");
+	const [hall, setHall] = useState("Select hall"); //State variable for currently selected bar
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const date = new Date();
-	const [day, setDay] = useState(date.getDay());
+	const [day, setDay] = useState(date.getDay()); //Currently selected day for viewing
 	const dispatch = useDispatch();
 
+	//Hook to access data from the database, updates whenever the date, hall, or day variables change
 	useEffect(() => {
 		axios
 			.get(
