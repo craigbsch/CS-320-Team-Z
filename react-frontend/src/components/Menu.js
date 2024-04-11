@@ -6,7 +6,7 @@ const Menu = () => {
 	const menuItems = useSelector(selectMenu);
 
 	return (
-		<ListGroup>
+		<ListGroup style={{ maxHeight: "80vh", overflowY: "auto" }}>
 			{menuItems.map((item, i) => (
 				<ListGroup.Item key={i}>{item.meal_name}</ListGroup.Item>
 			))}
