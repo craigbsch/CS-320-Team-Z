@@ -1,4 +1,9 @@
-import { DiningHallSelector, Menu, DaySelector } from "../components/";
+import {
+	DiningHallSelector,
+	Menu,
+	DaySelector,
+	MenuTODSelector,
+} from "../components/";
 import Container from "react-bootstrap/Container";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -11,6 +16,7 @@ const ViewMenuPage = () => {
 	const date = new Date();
 	const [day, setDay] = useState(date.getDay()); //Currently selected day for viewing
 	const dispatch = useDispatch();
+	const [menuTime, setMenuTime] = useState("lunch_menu");
 
 	//Hook to access data from the database, updates whenever the date, hall, or day variables change
 	useEffect(() => {
@@ -40,8 +46,9 @@ const ViewMenuPage = () => {
 			<Container className='d-flex justify-content-center align-items-center'>
 				<DiningHallSelector hall={hall} setHall={setHall} />
 				<DaySelector day={day} setDay={setDay} />
+				<MenuTODSelector menuTime={menuTime} setMenuTime={setMenuTime} />
 			</Container>
-			<Menu />
+			<Menu menuTime={menuTime} />
 		</Container>
 	);
 };
