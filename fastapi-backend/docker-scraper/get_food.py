@@ -14,10 +14,10 @@ from selenium.webdriver.chrome.options import Options
 
 
 # Get the path to the directory this file's parent is in
-BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
 
 # Join the path with env file
-load_dotenv(os.path.join(BASEDIR, 'dbInfo.env'))
+load_dotenv(os.path.join(BASEDIR, 'dbInfoDocker.env'))
 
 # Database connection details from environment variables
 DATABASE_URL = os.getenv('DATABASE_URL')
@@ -35,6 +35,7 @@ chrome_options.add_argument("--disable-dev-shm-usage")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
 dining_halls = ['berkshire', 'worcester', 'franklin', 'hampshire']
+
 # Connect to the database
 connection = pymysql.connect(
                             port=3306,
@@ -50,11 +51,21 @@ def convert_date(date_str):
     # Parse date from the format like "Wed April 03, 2024"
     return datetime.strptime(date_str, "%a %B %d, %Y").date()
 
+    
 def remove_suffix(value):
+    # Check if the value ends with 'mg' and convert
+    
+    if value.strip().endswith('mg'):
+        # Remove 'mg' suffix and convert remaining value to grams
+        return safe_convert (value.rstrip('mg'), float) / 1000
+    
     # Remove 'g' suffix from nutritional values
-    return value.strip('g')
+    elif value.strip().endswith('g'):
+        return safe_convert (value.rstrip('g'), float) 
+    
+    return safe_convert(value, float)
 
-def safe_convert(value, target_type, default=0):
+def safe_convert(value, target_type, default=0): # Prevent crashing in potential edge case (i.e. not listed)
     try:
         return target_type(value)
     except ValueError:
@@ -69,13 +80,13 @@ try:
 
         for hall in dining_halls:
             driver.get(f"https://umassdining.com/locations-menus/{hall}/menu")
-            
+
             # Wait for the page to load and JavaScript to execute
             driver.implicitly_wait(15)
-            
+
             # Select the drop-down for dates
             date_dropdown = Select(driver.find_element(By.ID, 'upcoming-foodpro'))
-            
+
             # Iterate over the dates in the drop-down
             for index in range(len(date_dropdown.options)):
                 # Select the date by index
@@ -91,32 +102,37 @@ try:
                 # Parse the HTML content of the page
                 soup = BeautifulSoup(content, 'html.parser')
 
+                #select all divs with role "tabpanel" in the 'panel-control' class
+                type_id = soup.select('.panel-container div[role="tabpanel"]')
 
-                # Select all items with the 'lightbox-nutrition' class
-                food_items = soup.select('.lightbox-nutrition a')
-                selected_date = date_dropdown.first_selected_option.text.strip()
-                formatted_date = convert_date(selected_date)
-
-                for item in food_items:
+                for type in type_id:
 
                     # Select all items with the 'lightbox-nutrition' class
+                    food_items = type.select('.lightbox-nutrition a')
+                    selected_date = date_dropdown.first_selected_option.text.strip()
+                    formatted_date = convert_date(selected_date)
 
-                    food_name = item.text.strip()
-                    calories = safe_convert(item.get('data-calories'), int)
-                    protein = safe_convert(remove_suffix(item.get('data-protein')), float)
-                    fats = safe_convert(remove_suffix(item.get('data-total-fat')), float)
-                    carbs = safe_convert(remove_suffix(item.get('data-total-carb')), float)
-                    allergens = item.get('data-allergens')
+                    for item in food_items:
 
-                    # Write SQL query to insert a record into the database.
-                    sql = f"INSERT INTO {DATABASE_MEAL_TABLE} (meal_name, date_served, calories, carbohydrates, fat, protein, allergens, dining_hall) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-                    cursor.execute(sql, (food_name, formatted_date, calories, carbs, fats, protein, allergens, hall))
+                        # Select all items with the 'lightbox-nutrition' class
 
-                # Commit the changes after each dining hall
-                connection.commit()
+                        food_name = item.text.strip()
+                        calories = safe_convert(item.get('data-calories'), float)
+                        protein = remove_suffix(item.get('data-protein'))
+                        fats = remove_suffix(item.get('data-total-fat'))
+                        carbs = remove_suffix(item.get('data-total-carb'))
+                        allergens = item.get('data-allergens')
+                        meal_type = type.get('id')
 
-                # Re-find the drop-down after the page updates
-                date_dropdown = Select(driver.find_element(By.ID, 'upcoming-foodpro'))
+                        # Write SQL query to insert a record into the database.
+                        sql = f"INSERT INTO {DATABASE_MEAL_TABLE} (meal_name, date_served, calories, carbohydrates, fat, protein, allergens, dining_hall, meal_type) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                        cursor.execute(sql, (food_name, formatted_date, calories, carbs, fats, protein, allergens, hall, meal_type))
+
+                    # Commit the changes after each dining hall
+                    connection.commit()
+
+                    # Re-find the drop-down after the page updates
+                    date_dropdown = Select(driver.find_element(By.ID, 'upcoming-foodpro'))
 
 finally:
     # Close the database connection
