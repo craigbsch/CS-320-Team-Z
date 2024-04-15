@@ -7,7 +7,7 @@ const Menu = (props) => {
 	let menuItems = useSelector(selectMenu);
 	if (props.restrictions)
 		menuItems = menuItems.filter(
-			(item) => props.restrictions.isDisjointFrom(item.allergens) //Filters out food that has any of the restrictions
+			(item) => item.allergens.isDisjointFrom(props.restrictions) //Filters out food that has any of the restrictions
 		);
 	//Mapping of the different times of day to sort the menu, useMemo hook allows memoization
 	const menuTOD = useMemo(
