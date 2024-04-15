@@ -20,16 +20,11 @@ const Menu = (props) => {
 		}),
 		[menuItems]
 	);
-	//TODO Will implement once API changes
+
 	// props.setAllergens(
 	// 	useMemo(() => {
 	// 		const allergenSet = new Set();
-	// 		menuItems.forEach((item) => {
-	// 			const allergens = new Set(Object.keys(item.allergens)); //Assuming allergens: {"allergen: null"} format
-	// 			allergens.forEach((a) =>
-	// 				!allergenSet.has(a) ? allergenSet.add(a) : a
-	// 			);
-	// 		});
+	// 		menuItems.forEach((item) => allergenSet.union(item.allergens));
 	// 		return allergenSet;
 	// 	}, [menuItems])
 	// );
