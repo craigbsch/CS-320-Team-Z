@@ -51,11 +51,21 @@ def convert_date(date_str):
     # Parse date from the format like "Wed April 03, 2024"
     return datetime.strptime(date_str, "%a %B %d, %Y").date()
 
+    
 def remove_suffix(value):
+    # Check if the value ends with 'mg' and convert
+    
+    if value.strip().endswith('mg'):
+        # Remove 'mg' suffix and convert remaining value to grams
+        return safe_convert (value.rstrip('mg'), float) / 1000
+    
     # Remove 'g' suffix from nutritional values
-    return value.strip('g')
+    elif value.strip().endswith('g'):
+        return safe_convert (value.rstrip('g'), float) 
+    
+    return safe_convert(value, float)
 
-def safe_convert(value, target_type, default=0):
+def safe_convert(value, target_type, default=0): # Prevent crashing in potential edge case (i.e. not listed)
     try:
         return target_type(value)
     except ValueError:
@@ -107,10 +117,10 @@ try:
                         # Select all items with the 'lightbox-nutrition' class
 
                         food_name = item.text.strip()
-                        calories = safe_convert(item.get('data-calories'), int)
-                        protein = safe_convert(remove_suffix(item.get('data-protein')), float)
-                        fats = safe_convert(remove_suffix(item.get('data-total-fat')), float)
-                        carbs = safe_convert(remove_suffix(item.get('data-total-carb')), float)
+                        calories = safe_convert(item.get('data-calories'), float)
+                        protein = remove_suffix(item.get('data-protein'))
+                        fats = remove_suffix(item.get('data-total-fat'))
+                        carbs = remove_suffix(item.get('data-total-carb'))
                         allergens = item.get('data-allergens')
                         meal_type = type.get('id')
 

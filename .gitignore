@@ -7,3 +7,4 @@ fastapi-backend/docker-scraper/dbInfoDocker.env
 fastapi-backend/docker-scraper/.dbInfoDocker.env.swp
 fastapi-backend/venv
 .vscode
+fastapi-backend/dininginfoapi/.idea
