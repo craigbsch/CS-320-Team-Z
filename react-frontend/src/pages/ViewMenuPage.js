@@ -3,6 +3,7 @@ import {
 	Menu,
 	DaySelector,
 	MenuTODSelector,
+	RestrictionSelector,
 } from "../components/";
 import Container from "react-bootstrap/Container";
 import { useEffect, useState } from "react";
@@ -16,7 +17,23 @@ const ViewMenuPage = () => {
 	const date = new Date();
 	const [day, setDay] = useState(date.getDay()); //Currently selected day for viewing
 	const dispatch = useDispatch();
-	const [menuTime, setMenuTime] = useState("lunch_menu");
+	const [menuTime, setMenuTime] = useState("breakfast_menu");
+	const [allergens, setAllergens] = useState(
+		new Set([
+			//Test data
+			"Milk",
+			"Peanuts",
+			"Shellfish",
+			"Eggs",
+			"Gluten",
+			"Tree Nuts",
+			"Fish",
+			"Soy",
+			"Corn",
+			"Sesame",
+		])
+	);
+	const [restrictions, setRestrictions] = useState(new Set(["Milk"]));
 
 	//Hook to access data from the database, updates whenever the date, hall, or day variables change
 	useEffect(() => {
@@ -47,8 +64,17 @@ const ViewMenuPage = () => {
 				<DiningHallSelector hall={hall} setHall={setHall} />
 				<DaySelector day={day} setDay={setDay} />
 				<MenuTODSelector menuTime={menuTime} setMenuTime={setMenuTime} />
+				<RestrictionSelector
+					allergens={allergens}
+					restrictions={restrictions}
+					setRestrictions={setRestrictions}
+				/>
 			</Container>
-			<Menu menuTime={menuTime} />
+			<Menu
+				menuTime={menuTime}
+				setAllergens={setAllergens}
+				restrictions={restrictions}
+			/>
 		</Container>
 	);
 };

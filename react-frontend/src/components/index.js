@@ -6,6 +6,7 @@ import DaySelector from "./DaySelector.js";
 import DiningHallSelector from "./DiningHallSelector.js";
 import Menu from "./Menu.js";
 import MenuTODSelector from "./MenuTODSelector.js";
+import RestrictionSelector from "./RestrictionSelector.js";
 
 export {
 	FoodItem,
@@ -16,4 +17,5 @@ export {
 	DiningHallSelector,
 	Menu,
 	MenuTODSelector,
+	RestrictionSelector,
 };
