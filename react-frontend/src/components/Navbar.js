@@ -3,6 +3,8 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
+import LogoutButton from "../components/LogoutButton";
+import Profile from "./Profile";
 
 //functional component for the navigation bar
 const NavBar = () => {
@@ -13,6 +15,8 @@ const NavBar = () => {
 				<Navbar.Brand>
 					<h1 style={{ color: "white" }}>Nutrition Calc</h1>
 				</Navbar.Brand>
+				<LogoutButton></LogoutButton>
+				<Profile></Profile>
 			</Container>
 		</Navbar>
 	);
