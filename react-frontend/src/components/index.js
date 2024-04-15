@@ -1,11 +1,17 @@
-import FoodItem from './Food_item';
-import Login from './Login';
-import MealTracker from './Meal_tracker.js';
-import Navbar from "./Navbar";
+import FoodItem from "./Food_item";
+import Login from "./Login";
+import MealTracker from "./Meal_tracker.js";
+import NavBar from "./NavBar.js";
+import DaySelector from "./DaySelector.js";
+import DiningHallSelector from "./DiningHallSelector.js";
+import Menu from "./Menu.js";
 
 export {
-    FoodItem,
-    Login,
-    MealTracker,
-    Navbar,
-}
+	FoodItem,
+	Login,
+	MealTracker,
+	NavBar,
+	DaySelector,
+	DiningHallSelector,
+	Menu,
+};

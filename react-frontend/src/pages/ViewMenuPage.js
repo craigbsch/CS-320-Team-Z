@@ -1,11 +1,9 @@
-import DiningHallSelector from "../components/DiningHallSelector";
-import Menu from "../components/Menu";
+import { DiningHallSelector, Menu, DaySelector } from "../components/";
 import Container from "react-bootstrap/Container";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setMenu } from "../redux/menuSlice";
-import DaySelector from "../components/DaySelector";
 
 const ViewMenuPage = () => {
 	const [hall, setHall] = useState("Select hall"); //State variable for currently selected bar

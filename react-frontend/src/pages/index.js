@@ -1,7 +1,5 @@
-import Layout from './Layout';
-import LoginPage from './LoginPage';
+import Layout from "./Layout";
+import LoginPage from "./LoginPage";
+import ViewMenuPage from "./ViewMenuPage";
 
-export {
-    Layout,
-    LoginPage
-}
+export { Layout, LoginPage, ViewMenuPage };
