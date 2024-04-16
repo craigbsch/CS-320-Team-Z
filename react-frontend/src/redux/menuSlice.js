@@ -6,6 +6,7 @@ export const menuSlice = createSlice({
 	reducers: {
 		setMenu: (state, action) => {
 			const menu = action.payload;
+			//Processing JSON dictionary into a JS Set
 			// menu.forEach(
 			// 	(item) => (item.allergens = new Set(Object.keys(item.allergens)))
 			// );

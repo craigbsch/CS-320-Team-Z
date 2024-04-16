@@ -4,7 +4,7 @@ import {
 	DaySelector,
 	MenuTODSelector,
 	RestrictionSelector,
-} from "../components/";
+} from "../components";
 import Container from "react-bootstrap/Container";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -33,7 +33,7 @@ const ViewMenuPage = () => {
 			"Sesame",
 		])
 	);
-	const [restrictions, setRestrictions] = useState(new Set(["Milk"]));
+	const [restrictions, setRestrictions] = useState(new Set()); //Can add import here for user data once setup to remember filters
 
 	//Hook to access data from the database, updates whenever the date, hall, or day variables change
 	useEffect(() => {

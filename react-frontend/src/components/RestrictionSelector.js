@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form";
 
 const RestrictionSelector = (props) => {
 	const toggleRestriction = (value) => {
+		//needs to be setup this way to avoid state variable shenanigans
 		const restrictions = new Set(props.restrictions);
 		props.restrictions.has(value)
 			? restrictions.delete(value)
