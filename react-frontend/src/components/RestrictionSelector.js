@@ -17,10 +17,10 @@ const RestrictionSelector = (props) => {
 		<Container className='d-flex justify-content-center align-items-center'>
 			<Dropdown>
 				<Dropdown.Toggle id='dropdown-autoclose-false'>
-					Allergens
+					Allergies
 				</Dropdown.Toggle>
 				<DropdownMenu>
-					<Dropdown.ItemText>Allergens present:</Dropdown.ItemText>
+					<Dropdown.ItemText>Current allergens:</Dropdown.ItemText>
 					<Container className='d-flex align-items-center'>
 						<Form>
 							{[...props.allergens].map((a) => (
@@ -29,7 +29,7 @@ const RestrictionSelector = (props) => {
 									key={a}
 									label={a}
 									onChange={() => toggleRestriction(a)}
-									checked={!props.restrictions.has(a)}
+									checked={props.restrictions.has(a)}
 								/>
 							))}
 						</Form>
