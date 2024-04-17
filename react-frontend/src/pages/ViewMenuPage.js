@@ -1,11 +1,15 @@
-import DiningHallSelector from "../components/DiningHallSelector";
-import Menu from "../components/Menu";
+import {
+	DiningHallSelector,
+	Menu,
+	DaySelector,
+	MenuTODSelector,
+	RestrictionSelector,
+} from "../components";
 import Container from "react-bootstrap/Container";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setMenu } from "../redux/menuSlice";
-import DaySelector from "../components/DaySelector";
 
 const ViewMenuPage = () => {
 	const [hall, setHall] = useState("Select hall"); //State variable for currently selected bar
@@ -13,6 +17,9 @@ const ViewMenuPage = () => {
 	const date = new Date();
 	const [day, setDay] = useState(date.getDay()); //Currently selected day for viewing
 	const dispatch = useDispatch();
+	const [menuTime, setMenuTime] = useState("breakfast_menu");
+	const [allergens, setAllergens] = useState(new Set());
+	const [restrictions, setRestrictions] = useState(new Set()); //Can add import here for user data once setup to remember filters
 
 	//Hook to access data from the database, updates whenever the date, hall, or day variables change
 	useEffect(() => {
@@ -42,8 +49,18 @@ const ViewMenuPage = () => {
 			<Container className='d-flex justify-content-center align-items-center'>
 				<DiningHallSelector hall={hall} setHall={setHall} />
 				<DaySelector day={day} setDay={setDay} />
+				<MenuTODSelector menuTime={menuTime} setMenuTime={setMenuTime} />
+				<RestrictionSelector
+					allergens={allergens}
+					restrictions={restrictions}
+					setRestrictions={setRestrictions}
+				/>
 			</Container>
-			<Menu />
+			<Menu
+				menuTime={menuTime}
+				setAllergens={setAllergens}
+				restrictions={restrictions}
+			/>
 		</Container>
 	);
 };

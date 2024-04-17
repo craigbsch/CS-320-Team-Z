@@ -35,7 +35,7 @@ app.add_middleware(
 def get_db_connection():
 
     """Establishes a database connection using pymysql.
-    
+
     Returns:
         pymysql.connections.Connection: A pymysql connection object.
     """
@@ -52,14 +52,14 @@ def get_db_connection():
     )
 
 @app.get('/menu')
-async def get_menu(dining_hall: str = Query(...), date_served: str = Query(...)): 
+async def get_menu(dining_hall: str = Query(...), date_served: str = Query(...)):
 
     """Fetches menu information from the database.
-    
+
     Args:
         dining_hall (str): The name of the dining hall. Required query parameter.
         date_served (str): The date for which menu is being queried. Required query parameter.
-    
+
     Returns:
         list[dict]: A list of meal information dictionaries.
     """
@@ -67,12 +67,18 @@ async def get_menu(dining_hall: str = Query(...), date_served: str = Query(...))
         sql = 'SELECT * FROM meal_info WHERE dining_hall=%s AND date_served=%s'
         cursor.execute(sql, (dining_hall, date_served))  # Note the comma to make it a tuple
         result = cursor.fetchall()
+
+        for meal in result:
+            allergens_list = meal['allergens'].split(', ')
+            # Strip whitespace and create a dictionary with each allergen as key and None as value
+            meal['allergens'] = {allergen.strip(): None for allergen in allergens_list if allergen.strip()}
+
     return result
 
 @app.get("/testdb")
 async def test_db_connection():
     """Tests the database connection.
-    
+
     Returns:
         dict: A dictionary indicating the success or failure of the connection attempt.
     """
@@ -86,5 +92,5 @@ async def test_db_connection():
         return {"success": False, "error": str(e)}
 
 
-
-app = func.AsgiFunctionApp(app=app, http_auth_level=func.AuthLevel.ANONYMOUS)
+#when running locally comment this line out
+#app = func.AsgiFunctionApp(app=app, http_auth_level=func.AuthLevel.ANONYMOUS)
