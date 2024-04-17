@@ -1,9 +1,11 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, HTTPException
 import pymysql.cursors
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
 import azure.functions as func
+from datetime import datetime, timedelta
+
 
 
 # Load environment variables from .env file
@@ -53,7 +55,6 @@ def get_db_connection():
 
 @app.get('/menu')
 async def get_menu(dining_hall: str = Query(...), date_served: str = Query(...)):
-
     """Fetches menu information from the database.
 
     Args:
@@ -61,8 +62,18 @@ async def get_menu(dining_hall: str = Query(...), date_served: str = Query(...))
         date_served (str): The date for which menu is being queried. Required query parameter.
 
     Returns:
-        list[dict]: A list of meal information dictionaries.
+        list[dict]: A list of meal information dictionaries or an error message.
     """
+    # Validate the date_served to ensure it is not before the most recent scrape
+    try:
+        served_date = datetime.strptime(date_served, "%Y-%m-%d")
+        today = datetime.today()
+        last_scrape = today - timedelta(days=today.weekday() + 2)
+        if served_date < last_scrape:
+            raise HTTPException(status_code=404, detail={"error": "Invalid date: Date is before the most recent scrape"})
+    except ValueError:
+        raise HTTPException(status_code=404, detail={"error": "Invalid date: Date should be in the form of yyyy-mm-dd"})
+
     with get_db_connection().cursor() as cursor:
         sql = 'SELECT * FROM meal_info WHERE dining_hall=%s AND date_served=%s'
         cursor.execute(sql, (dining_hall, date_served))  # Note the comma to make it a tuple
@@ -70,10 +81,11 @@ async def get_menu(dining_hall: str = Query(...), date_served: str = Query(...))
 
         for meal in result:
             allergens_list = meal['allergens'].split(', ')
-            # Strip whitespace and create a dictionary with each allergen as key and None as value
             meal['allergens'] = {allergen.strip(): None for allergen in allergens_list if allergen.strip()}
 
     return result
+
+
 
 @app.get("/testdb")
 async def test_db_connection():
