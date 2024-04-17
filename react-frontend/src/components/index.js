@@ -8,6 +8,8 @@ import DiningHallSelector from "./DiningHallSelector.js";
 import Menu from "./Menu.js";
 import MenuTODSelector from "./MenuTODSelector.js";
 import RestrictionSelector from "./RestrictionSelector.js";
+import Auth0ProviderWithRedirectCallback from "./Auth0ProviderWithRedirectCallback.js";
+import ProtectedRoute from "./ProtectedRoute.js";
 
 export {
 	FoodItem,
@@ -20,4 +22,6 @@ export {
 	Menu,
 	MenuTODSelector,
 	RestrictionSelector,
+	Auth0ProviderWithRedirectCallback,
+	ProtectedRoute,
 };
