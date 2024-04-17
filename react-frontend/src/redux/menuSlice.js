@@ -7,9 +7,10 @@ export const menuSlice = createSlice({
 		setMenu: (state, action) => {
 			const menu = action.payload;
 			//Processing JSON dictionary into a JS Set
-			// menu.forEach(
-			// 	(item) => (item.allergens = new Set(Object.keys(item.allergens)))
-			// );
+			menu.forEach(
+				(item) => (item.allergens = new Set(Object.keys(item.allergens)))
+			);
+			console.log(menu);
 			state.value = menu;
 		},
 	},

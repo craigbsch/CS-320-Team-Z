@@ -18,21 +18,7 @@ const ViewMenuPage = () => {
 	const [day, setDay] = useState(date.getDay()); //Currently selected day for viewing
 	const dispatch = useDispatch();
 	const [menuTime, setMenuTime] = useState("breakfast_menu");
-	const [allergens, setAllergens] = useState(
-		new Set([
-			//Test data
-			"Milk",
-			"Peanuts",
-			"Shellfish",
-			"Eggs",
-			"Gluten",
-			"Tree Nuts",
-			"Fish",
-			"Soy",
-			"Corn",
-			"Sesame",
-		])
-	);
+	const [allergens, setAllergens] = useState(new Set());
 	const [restrictions, setRestrictions] = useState(new Set()); //Can add import here for user data once setup to remember filters
 
 	//Hook to access data from the database, updates whenever the date, hall, or day variables change
