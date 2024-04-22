@@ -25,9 +25,14 @@ const Menu = (props) => {
 	menuItems = useMemo(
 		() =>
 			props.restrictions
-				? menuItems.filter((item) =>
-						item.allergens.isDisjointFrom(props.restrictions)
-				  )
+				? menuItems.filter((item) => 	{
+					for (const restriction of props.restrictions) {
+					if (item.allergens.has(restriction)) {
+						return false; // Not disjoint
+					}
+				}
+				return true; // Disjoint
+ 				} )
 				: menuItems,
 		[props.restrictions, menuItems]
 	);
