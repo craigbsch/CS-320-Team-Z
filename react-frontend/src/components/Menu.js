@@ -5,13 +5,6 @@ import { useEffect, useMemo } from "react";
 
 const Menu = (props) => {
 	let menuItems = useSelector(selectMenu);
-	function isDisjointFrom(set1, set2) {
-		for (let item of set1) {
-			if (set2.has(item)) {
-				return false;
-			}
-		}
-	}
 	
 	//Collects all present allergens
 	const allergensSet = useMemo(() => {
@@ -33,8 +26,7 @@ const Menu = (props) => {
 		() =>
 			props.restrictions
 				? menuItems.filter((item) =>
-						isDisjointFrom(item.allergens,props.restrictions)
-						//item.allergens.isDisjointFrom(props.restrictions)
+						item.allergens.isDisjointFrom(props.restrictions)
 				  )
 				: menuItems,
 		[props.restrictions, menuItems]
