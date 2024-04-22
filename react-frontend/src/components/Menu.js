@@ -11,6 +11,7 @@ const Menu = (props) => {
 				return false;
 			}
 		}
+	}
 	
 	//Collects all present allergens
 	const allergensSet = useMemo(() => {
