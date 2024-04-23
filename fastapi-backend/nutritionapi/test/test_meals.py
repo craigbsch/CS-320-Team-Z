@@ -1,7 +1,15 @@
 from fastapi.testclient import TestClient
-from function_app import app  # Imports the actual FastAPI app
 from datetime import datetime, timedelta
-from datetime import datetime, timedelta
+import sys
+from pathlib import Path
+
+# Add the project root directory to the path
+root_dir = str(Path(__file__).resolve().parents[1])  
+sys.path.append(root_dir)
+from function_app import app
+
+
+
 
 
 client = TestClient(app)
@@ -37,7 +45,7 @@ def test_menu_no_breakfast_berkshire():
     assert all(meal['meal_type'] != 'breakfast_menu' for meal in meals)
 
 def test_db_connection_success():
-    response = client.get("/testdb")
+    response = client.get("/menu/testdb")
     assert response.status_code == 200
     assert response.json() == {"success": True, "result": {'1': 1}}
 

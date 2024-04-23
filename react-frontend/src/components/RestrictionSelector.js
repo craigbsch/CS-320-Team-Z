@@ -14,7 +14,7 @@ const RestrictionSelector = (props) => {
 	};
 
 	return (
-		<Container className='d-flex justify-content-center align-items-center'>
+		<Container className='d-flex justify-content-start align-items-start'>
 			<Dropdown>
 				<Dropdown.Toggle id='dropdown-autoclose-false'>
 					Allergies
