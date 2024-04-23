@@ -1,5 +1,5 @@
 import pymysql.cursors
-from config import DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME
+from include.config import DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME
 
 def get_db_connection():
     return pymysql.connect(

@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 # Load environment variables from .env file
 # Get the path to the directory this file is in
-BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'),)
 
 # Join the path with env file
 load_dotenv(os.path.join(BASEDIR, 'dbInfo.env'))

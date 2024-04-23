@@ -1,10 +1,10 @@
 from typing import List
 from fastapi import APIRouter, Depends, Query, HTTPException, Path, Body
 from datetime import datetime
-from dependencies import get_token_auth_header
-from models import Meal
-from database import get_db_connection
-from config import DATABASE_NUTRITION_TABLE
+from include.dependencies import get_token_auth_header
+from include.models import Meal
+from include.database import get_db_connection
+from include.config import DATABASE_NUTRITION_TABLE
 
 router = APIRouter(tags=["Nutrition Information"])
 

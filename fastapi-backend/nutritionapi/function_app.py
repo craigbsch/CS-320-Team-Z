@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from dependencies import get_token_auth_header
-from menu_routes import router as menu_router
-from nutrition_routes import router as nutrition_router
+from include.dependencies import get_token_auth_header
+from routes.menu_routes import router as menu_router
+from routes.nutrition_routes import router as nutrition_router
 import azure.functions as func
 
 app = FastAPI()
@@ -21,4 +21,4 @@ app.include_router(menu_router, prefix="/menu")
 app.include_router(nutrition_router, prefix="/nutrition")
 
 # when running locally comment this line out
-app = func.AsgiFunctionApp(app=app, http_auth_level=func.AuthLevel.ANONYMOUS)
+#app = func.AsgiFunctionApp(app=app, http_auth_level=func.AuthLevel.ANONYMOUS)

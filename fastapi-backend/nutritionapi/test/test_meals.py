@@ -1,6 +1,15 @@
 from fastapi.testclient import TestClient
-from function_app import app  # Imports the actual FastAPI app
 from datetime import datetime, timedelta
+import sys
+from pathlib import Path
+
+# Add the project root directory to the path
+root_dir = str(Path(__file__).resolve().parents[1])  
+sys.path.append(root_dir)
+from function_app import app
+
+
+
 
 
 client = TestClient(app)

@@ -3,7 +3,7 @@ from fastapi.security import OAuth2AuthorizationCodeBearer
 from jose import jwt, JWTError
 from urllib.request import urlopen
 import json
-from config import AUTH0_DOMAIN, ALGORITHMS, API_AUDIENCE
+from include.config import AUTH0_DOMAIN, ALGORITHMS, API_AUDIENCE
 
 oauth2_scheme = OAuth2AuthorizationCodeBearer(
     authorizationUrl=f"https://{AUTH0_DOMAIN}/authorize",
