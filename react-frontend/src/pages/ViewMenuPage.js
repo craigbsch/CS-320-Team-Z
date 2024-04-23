@@ -50,16 +50,13 @@ const ViewMenuPage = () => {
 				<DiningHallSelector hall={hall} setHall={setHall} />
 				<DaySelector day={day} setDay={setDay} />
 				<MenuTODSelector menuTime={menuTime} setMenuTime={setMenuTime} />
-				<RestrictionSelector
-					allergens={allergens}
-					restrictions={restrictions}
-					setRestrictions={setRestrictions}
-				/>
 			</Container>
 			<Menu
 				menuTime={menuTime}
+				allergens={allergens}
 				setAllergens={setAllergens}
 				restrictions={restrictions}
+				setRestrictions={setRestrictions}
 			/>
 		</Container>
 	);

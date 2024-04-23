@@ -10,7 +10,7 @@ export const menuSlice = createSlice({
 			menu.forEach(
 				(item) => (item.allergens = new Set(Object.keys(item.allergens)))
 			);
-			console.log(menu);
+			//console.log(menu);
 			state.value = menu;
 		},
 	},

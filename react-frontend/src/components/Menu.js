@@ -1,11 +1,16 @@
-import ListGroup from "react-bootstrap/ListGroup";
-import { selectMenu } from "../redux/menuSlice";
-import { useSelector } from "react-redux";
-import { useEffect, useMemo } from "react";
+
+
+import React, { useState, useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { Table } from 'react-bootstrap';
+import { selectMenu } from '../redux/menuSlice';
+import "../styling/Menu.css"
+import RestrictionSelector from './RestrictionSelector';
 
 const Menu = (props) => {
 	let menuItems = useSelector(selectMenu);
-	
+	const [open, setOpen] = useState({}); // State to track open rows
+
 	//Collects all present allergens
 	const allergensSet = useMemo(() => {
 		const set = new Set();
@@ -49,13 +54,58 @@ const Menu = (props) => {
 		[menuItems]
 	);
 
+
+	const toggleRow = (index) => {
+		setOpen(prev => ({ ...prev, [index]: !prev[index] }));
+	};
+
+	const renderAllergens = (allergens) => {
+		let set = new Set();
+		allergens.forEach((allergen) => set.add(allergen));
+		if (set.size === 0) {
+			return "None";
+		}
+		
+		  // Convert the set to a string, with allergens separated by commas
+		  return Array.from(set).join(', ');
+	  };
+
 	return (
-		<ListGroup style={{ maxHeight: "80vh", overflowY: "auto" }}>
-			{menuTOD[props.menuTime].map((item, i) => (
-				<ListGroup.Item key={i}>{item.meal_name}</ListGroup.Item>
+		<Table striped bordered hover responsive>
+			<thead>
+			<tr>
+				<th>Meal Name</th>
+				<th>Calories</th>
+				<th> <RestrictionSelector
+						allergens={props.allergens}
+						restrictions={props.restrictions}
+						setRestrictions={props.setRestrictions}
+						/></th>
+			</tr>
+			</thead>
+			<tbody>
+			{menuTOD[props.menuTime].map((item, index) => (
+				<React.Fragment key={`item-${index}`}>
+				<tr onClick={() => toggleRow(index)}>
+					<td>{item.meal_name}</td>
+					<td>{item.calories}</td>
+					<td>{renderAllergens(item.allergens)}</td>
+				</tr>
+				{open[index] && (
+					<tr onClick={() => toggleRow(index)} key={`details-${index}`}>
+					<td colSpan="3">
+						<strong>Carbohydrates:</strong> {item.carbohydrates}g<br />
+						<strong>Fat:</strong> {item.fat}g<br />
+						<strong>Protein:</strong> {item.protein}g<br />
+					</td>
+					</tr>
+				)}
+				</React.Fragment>
 			))}
-		</ListGroup>
-	);
-};
+			</tbody>
+		</Table>
+		);
+	};
+
 
 export default Menu;

@@ -23,6 +23,7 @@ root.render(
 				clientId='VhHtVyvfRtjN3ldu7gY8D2uAOuHD2pTV'
 				authorizationParams={{
 					redirect_uri: window.location.origin + "/viewMenu",
+					audience: "https://nutrition/info",
 				}}
 			>
 				<Routes>
