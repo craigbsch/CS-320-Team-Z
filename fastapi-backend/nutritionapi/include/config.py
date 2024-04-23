@@ -11,7 +11,10 @@ load_dotenv(os.path.join(BASEDIR, 'dbInfo.env'))
 
 
 # configuration
-AUTH0_DOMAIN = 'dev-dvb6li7z8kj02il0.us.auth0.com'
+
+AUTH0_DOMAIN = os.getenv('AUTH0_DOMAIN')
+AUTH0_CLIENT_ID = os.getenv('AUTH0_CLIENT_ID')
+AUTH0_SECRET = os.getenv('AUTH0_CLIENT_SECRET')
 API_AUDIENCE = 'https://nutrition/info'  
 ALGORITHMS = ["RS256"]
 DATABASE_URL = os.getenv('DATABASE_URL')
