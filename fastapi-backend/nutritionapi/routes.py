@@ -6,8 +6,6 @@ from models import Meal
 from database import get_db_connection
 from config import DATABASE_NUTRITION_TABLE
 
-
-
 router = APIRouter()
 
 @router.get("/api/public")

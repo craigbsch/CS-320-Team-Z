@@ -87,6 +87,46 @@ async def get_menu(dining_hall: str = Query(...), date_served: str = Query(...))
 
 
 
+@app.get('/meal_types')
+async def get_meal_types(dining_hall: str = Query(...), date_served: str = Query(...)):
+    """Fetches all unique meal types for a specified dining hall and date.
+
+    Args:
+        dining_hall (str): The name of the dining hall. Required query parameter.
+        date_served (str): The date for which meal types are queried. Required query parameter.
+
+    Returns:
+        list[str]: A list of unique meal types or an error message.
+    """
+    with get_db_connection().cursor() as cursor:
+        sql = 'SELECT DISTINCT meal_type FROM meal_info WHERE dining_hall=%s AND date_served=%s'
+        cursor.execute(sql, (dining_hall, date_served))
+        meal_types = cursor.fetchall()
+        return [meal_type['meal_type'] for meal_type in meal_types]
+
+
+
+@app.get('/valid_dates')
+async def get_valid_dates(dining_hall: str = Query(...)):
+    """Fetches all dates with available meal records for a specified dining hall.
+
+    Args:
+        dining_hall (str): The name of the dining hall. Required query parameter.
+
+    Returns:
+        list[str]: A list of dates in 'yyyy-mm-dd' format.
+    """
+    with get_db_connection().cursor() as cursor:
+        sql = 'SELECT DISTINCT date_served FROM meal_info WHERE dining_hall=%s ORDER BY date_served'
+        cursor.execute(sql, (dining_hall,))
+        dates = cursor.fetchall()
+        return [date['date_served'].strftime('%Y-%m-%d') for date in dates]
+
+
+
+
+
+
 @app.get("/testdb")
 async def test_db_connection():
     """Tests the database connection.
