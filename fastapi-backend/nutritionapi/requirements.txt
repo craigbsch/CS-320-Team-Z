@@ -3,3 +3,6 @@ fastapi
 PyMySQL
 python-dotenv
 uvicorn
+python-jose
+
+

@@ -9,8 +9,9 @@ fastapi-backend/docker-scraper/dbInfoDocker.env
 fastapi-backend/docker-scraper/.dbInfoDocker.env.swp
 fastapi-backend/venv
 .vscode
+.venv/
 fastapi-backend/dininginfoapi/.idea
-fastapi-backend/dininginfoapi/.venv
+fastapi-backend/dininginfoapi/.venv/
 fastapi-backend/dininginfoapi/.vscode
 fastapi-backend/dininginfoapi/__pycache__
 fastapi-backend/dininginfoapi/.pytest_cache

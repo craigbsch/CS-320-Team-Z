@@ -6,7 +6,8 @@ from models import Meal
 from database import get_db_connection
 from config import DATABASE_NUTRITION_TABLE
 
-router = APIRouter()
+router = APIRouter(tags=["Nutrition Information"])
+
 
 @router.get("/api/public")
 async def public():
@@ -138,7 +139,7 @@ async def delete_meals(meal_id: int = Path(...), current_user: dict = Depends(ge
 
 
 @router.put('/api/update_meal/{meal_id}')
-async def update_meal(meal_id: int = Path(..., title="The ID of the meal to update", description="Must be a valid meal ID", example=123),
+async def update_meal(meal_id: int = Path(..., title="The ID of the meal to update", description="Must be a valid meal ID", examples=123),
                       meal: Meal = Body(...),
                       current_user: dict = Depends(get_token_auth_header)):
     """

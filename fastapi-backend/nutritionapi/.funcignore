@@ -1,0 +1,6 @@
+.venv
+.test_meals.py
+.idea
+.pytest_cache
+.vscode
+__pycache__
