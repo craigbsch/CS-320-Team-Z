@@ -67,6 +67,7 @@ async def public():
 @app.get("/api/private")
 async def private(current_user: dict = Depends(get_token_auth_header)):
     return current_user
+    
         
         # { "message": f"Hello from a private endpoint! You need to be authenticated to see this. Your "}
 
