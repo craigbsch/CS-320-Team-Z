@@ -1,0 +1,5 @@
+azure-functions
+fastapi
+PyMySQL
+python-dotenv
+uvicorn

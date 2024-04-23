@@ -1,10 +1,25 @@
-import React from "react";
+import {React, useEffect} from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Dropdown } from 'react-bootstrap';
 import "../styling/Profile.css"
 
 const Profile = () => {
-  const { user, isAuthenticated, isLoading, logout } = useAuth0();
+  const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0();
+
+  useEffect(() => {
+    const fetchAccessToken = async () => {
+      try {
+        const accessToken = await getAccessTokenSilently();
+        console.log("Access Token:", accessToken);
+      } catch (error) {
+        console.error("Error fetching access token:", error);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchAccessToken();
+    }
+  }, [isAuthenticated, getAccessTokenSilently]);
 
   if (isLoading) {
     return <div>Loading ...</div>;
@@ -15,7 +30,8 @@ const Profile = () => {
   }
 
   const handleLogout = () => logout({ returnTo: window.location.origin });
-
+  console.log(user)
+  
   return (
     <Dropdown align="end">
       <Dropdown.Toggle 
