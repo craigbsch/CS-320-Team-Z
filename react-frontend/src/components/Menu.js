@@ -35,11 +35,11 @@ const Menu = (props) => {
 	//Mapping of the different times of day to sort the menu, useMemo hook allows memoization
 	const menuTOD = useMemo(
 		() => ({
-			breakfast_menu: menuItems.filter(
-				(item) => item.meal_type === "breakfast_menu"
-			),
+			breakfast_menu: menuItems.filter((item) => item.meal_type === "breakfast_menu"),
 			lunch_menu: menuItems.filter((item) => item.meal_type === "lunch_menu"),
 			dinner_menu: menuItems.filter((item) => item.meal_type === "dinner_menu"),
+			latenight_menu: menuItems.filter((item) => item.meal_type === "latenight_menu"),
+			grabngo: menuItems.filter((item) => item.meal_type === "grabngo")
 		}),
 		[menuItems]
 	);

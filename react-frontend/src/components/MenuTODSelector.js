@@ -21,6 +21,12 @@ const MenuTODSelector = (props) => {
 				<ToggleButton id='tbg-radio-3' value={"dinner_menu"}>
 					Dinner
 				</ToggleButton>
+				<ToggleButton id='tbg-radio-4' value={"latenight_menu"}>
+					Late Night
+				</ToggleButton>
+				<ToggleButton id='tbg-radio-5' value={"grabngo"}>
+					Grab n' Go
+				</ToggleButton>
 			</ToggleButtonGroup>
 		</Container>
 	);
