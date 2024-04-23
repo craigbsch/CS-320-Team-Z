@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends, Query, HTTPException
+from fastapi import APIRouter, Depends, Query, HTTPException, Path, Body
 from datetime import datetime
 from dependencies import get_token_auth_header
 from models import Meal
@@ -95,7 +95,7 @@ async def get_meals(date: str = Query(...), current_user: dict = Depends(get_tok
     try:
         with connection.cursor() as cursor:
             sql = f"""
-            SELECT date, meal_name, calories, carbohydrates, fat, protein, meal_type
+            SELECT meal_id, date, meal_name, calories, carbohydrates, fat, protein, meal_type
             FROM {DATABASE_NUTRITION_TABLE}
             WHERE user_id = %s AND date = %s
             """
@@ -105,3 +105,85 @@ async def get_meals(date: str = Query(...), current_user: dict = Depends(get_tok
         connection.close()
 
     return {"user_id": user_id, "date": date, "meals": meals_data}
+
+
+
+@router.delete('/api/delete_meal/{meal_id}')
+async def delete_meals(meal_id: int = Path(...), current_user: dict = Depends(get_token_auth_header)):
+    """
+    Deletes a specific meal entry from the database based on its meal ID.
+
+    Args:
+        meal_id (int): The row ID of the meal to be deleted. Required path parameter.
+        current_user (dict): Current user details, fetched from the authentication header.
+
+    Returns:
+        dict: A status message indicating the success or failure of the delete operation.
+    """
+    user_id = current_user['uid']
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            sql = f"""
+            DELETE FROM {DATABASE_NUTRITION_TABLE}
+            WHERE meal_id = %s AND user_id = %s
+            """
+            cursor.execute(sql, (meal_id, user_id))
+            connection.commit()
+            if cursor.rowcount == 0:
+                raise HTTPException(status_code=404, detail="No meal found with the given ID for this user.")
+    finally:
+        connection.close()
+
+    return {"status": "success", "message": "Meal deleted successfully"}
+
+
+
+@router.put('/api/update_meal/{meal_id}')
+async def update_meal(meal_id: int = Path(..., title="The ID of the meal to update", description="Must be a valid meal ID", example=123),
+                      meal: Meal = Body(...),
+                      current_user: dict = Depends(get_token_auth_header)):
+    """
+    Updates an existing meal entry in the database based on its row ID.
+
+    Args:
+        meal_id (int): The row ID of the meal to be updated. This is a path parameter.
+        meal (Meal): The updated meal data to be stored. This data replaces the existing meal data.
+        current_user (dict): Current user details, fetched from the authentication header.
+
+    Returns:
+        dict: A status message indicating the success or failure of the update operation.
+    """
+    user_id = current_user['uid']
+    connection = get_db_connection()
+    try:
+        with connection.cursor() as cursor:
+            # Check if meal exists for the given user and ID
+            check_sql = f"SELECT 1 FROM {DATABASE_NUTRITION_TABLE} WHERE meal_id = %s AND user_id = %s"
+            cursor.execute(check_sql, (meal_id, user_id))
+            exists = cursor.fetchone()
+            if not exists:
+                raise HTTPException(status_code=404, detail="Meal not found with the given ID for this user.")
+
+            # Update the meal
+            update_sql = f"""
+            UPDATE {DATABASE_NUTRITION_TABLE}
+            SET date = %s, meal_name = %s, calories = %s, carbohydrates = %s, fat = %s, protein = %s, meal_type = %s
+            WHERE meal_id = %s AND user_id = %s
+            """
+            cursor.execute(update_sql, (
+                meal.date_served,
+                meal.meal_name,
+                meal.calories,
+                meal.carbohydrates,
+                meal.fat,
+                meal.protein,
+                meal.meal_type,
+                meal_id,
+                user_id
+            ))
+            connection.commit()
+    finally:
+        connection.close()
+
+    return {"status": "success", "message": "Meal updated successfully"}
