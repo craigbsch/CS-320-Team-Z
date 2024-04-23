@@ -48,7 +48,7 @@ const ViewMenuPage = () => {
 			</Container>
 			<Container className='d-flex justify-content-center align-items-center'>
 				<DiningHallSelector hall={hall} setHall={setHall} />
-				<DaySelector day={day} setDay={setDay} />
+				<DaySelector day={day} setDay={setDay} hall={hall}/>
 				<MenuTODSelector menuTime={menuTime} setMenuTime={setMenuTime} />
 			</Container>
 			<Menu
