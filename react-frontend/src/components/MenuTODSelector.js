@@ -4,6 +4,13 @@ import Container from "react-bootstrap/Container";
 
 const MenuTODSelector = (props) => {
 	const tempVal = props.menuTime;
+	const mealTypeNames = {
+							'breakfast_menu': 'Breakfast',
+							'lunch_menu': 'Lunch',
+							'dinner_menu': 'Dinner',
+							'latenight_menu': 'Latenight',
+							'grabngo': "Grab N' Go"
+						  }
 	return (
 		<Container className='d-flex justify-content-center align-items-center'>
 			<ToggleButtonGroup
@@ -12,21 +19,11 @@ const MenuTODSelector = (props) => {
 				defaultValue={tempVal}
 				onChange={props.setMenuTime}
 			>
-				<ToggleButton id='tbg-radio-1' value={"breakfast_menu"}>
-					Breakfast
+			{props.mealTypes.map(tod =>
+				<ToggleButton id='tbg-radio-1' value={tod}>
+					{mealTypeNames[tod]}
 				</ToggleButton>
-				<ToggleButton id='tbg-radio-2' value={"lunch_menu"}>
-					Lunch
-				</ToggleButton>
-				<ToggleButton id='tbg-radio-3' value={"dinner_menu"}>
-					Dinner
-				</ToggleButton>
-				<ToggleButton id='tbg-radio-4' value={"latenight_menu"}>
-					Late Night
-				</ToggleButton>
-				<ToggleButton id='tbg-radio-5' value={"grabngo"}>
-					Grab n' Go
-				</ToggleButton>
+			)}
 			</ToggleButtonGroup>
 		</Container>
 	);
