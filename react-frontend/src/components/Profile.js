@@ -4,6 +4,8 @@ import UserProfile from './userdropdown/UserProfile';
 import UserModal from './userdropdown/UserModal';
 import axios from 'axios';
 import '../styling/Profile.css';
+import { Alert, Spinner } from 'react-bootstrap';
+
 
 const Profile = () => {
   const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0();
@@ -23,15 +25,17 @@ const Profile = () => {
   const handleGenderChange = (e) => setGender(e.target.value);
   const handleLogout = () => logout({ returnTo: window.location.origin });
   const handleShowModal = () => setShowModal(true);
+  
+
+  // States for managing alert and loading status for submission
+  const [isLoadingSubmit, setLoadingSubmit] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', or null
 
 
 
   // Hide modal and reset values to their initial states
   const handleCloseModal = () => {
     setShowModal(false);
-    setHeight(user.custom_metadata?.height || '');
-    setWeight(user.custom_metadata?.weight || '');
-    setGender(user.custom_metadata?.gender || 'prefer_not_to_say');
   }
 
 
@@ -48,12 +52,13 @@ const Profile = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-
   // Handle submission of the modal form, send appropriate post request
   const handleSubmitModal = async () => {
     if (!validateMetadata()) {
       return;
     }
+    setLoadingSubmit(true);
+    setSubmitStatus(null);
     try {
       const accessToken = await getAccessTokenSilently();
       const response = await axios.post('https://dininginfobackend.azurewebsites.net/metadata/api/update_user', {
@@ -65,17 +70,29 @@ const Profile = () => {
         },
       });
       console.log(response.data);
-      setShowModal(false);  
+      setShowModal(false);
       window.location.reload();
+      setSubmitStatus({ type: 'success', message: 'Submission Successful!' });
+      setTimeout(() => setSubmitStatus(null), 3000);
+
     } catch (error) {
       console.error('Error submitting user metadata:', error);
+      setSubmitStatus({ type: 'danger', message: 'Error submitting data!' });
+      setTimeout(() => setSubmitStatus(null), 3000);
+    } finally {
+      setLoadingSubmit(false);
     }
   };
-
-
-  // Fetch a new access token when modal is closed (on update)
+  
+  // Fetch a new access token when modal is closed (on update), update values
   useEffect(() => {
     if (!showModal) {
+
+      setHeight(user.custom_metadata?.height || '');
+      setWeight(user.custom_metadata?.weight || '');
+      setGender(user.custom_metadata?.gender || 'prefer_not_to_say');
+
+
       const printNewAccessToken = async () => {
         try {
           const newAccessToken = await getAccessTokenSilently({ ignoreCache: true });
@@ -86,6 +103,8 @@ const Profile = () => {
         }
       };
       printNewAccessToken();
+
+      
     }
   }, [showModal, getAccessTokenSilently, user]);
 
@@ -112,8 +131,35 @@ const Profile = () => {
         onGenderChange={handleGenderChange}
         onSubmitModal={handleSubmitModal}
       />
-    </>
-  );
+ {isLoadingSubmit && (
+      <div style={{
+        position: 'fixed', 
+        top: '50%', 
+        left: '50%', 
+        transform: 'translate(-50%, -50%)',
+        zIndex: 1060  // Ensure this is above the modal z-index
+      }}>
+        <Spinner animation="border" variant="primary" />
+      </div>
+    )}
+    {submitStatus && (
+      <Alert 
+      variant={submitStatus.type} 
+      className={`custom-alert custom-alert-${submitStatus.type}`}
+      style={{
+        position: 'fixed',
+        bottom: '10px',
+        left: '10%',
+        right: '10%',
+        textAlign: 'center',
+        zIndex: 1060
+      }}
+    >
+      {submitStatus.message}
+    </Alert>
+    )}
+  </>
+);
 };
 
 export default Profile;
