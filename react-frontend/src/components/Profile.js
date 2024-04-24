@@ -1,203 +1,117 @@
-import React, { useState, useEffect } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import { Dropdown, Modal, Button, Form } from 'react-bootstrap';
-import "../styling/Profile.css"
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+import UserProfile from './userdropdown/UserProfile';
+import UserModal from './userdropdown/UserModal';
+import axios from 'axios';
+import '../styling/Profile.css';
 
 const Profile = () => {
-  const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout  } = useAuth0();
+  const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0();
+
+
+  // State management for showing the modal and storing user metadata
   const [showModal, setShowModal] = useState(false);
   const [height, setHeight] = useState(user.custom_metadata?.height || '');
   const [weight, setWeight] = useState(user.custom_metadata?.weight || '');
   const [gender, setGender] = useState(user.custom_metadata?.gender || 'prefer_not_to_say');
-
-
-
   const [errors, setErrors] = useState({});
 
 
+  // Event handlers for form inputs
   const handleHeightChange = (e) => setHeight(e.target.value);
   const handleWeightChange = (e) => setWeight(e.target.value);
   const handleGenderChange = (e) => setGender(e.target.value);
-
-
-
-
-
   const handleLogout = () => logout({ returnTo: window.location.origin });
-  const handleShowModal = () => {
-    // Set the state to default values when opening the modal
+  const handleShowModal = () => setShowModal(true);
+
+
+
+  // Hide modal and reset values to their initial states
+  const handleCloseModal = () => {
+    setShowModal(false);
     setHeight(user.custom_metadata?.height || '');
     setWeight(user.custom_metadata?.weight || '');
     setGender(user.custom_metadata?.gender || 'prefer_not_to_say');
-    
-    setShowModal(true);
-  };
-  
-  const handleCloseModal = () => setShowModal(false);
+  }
 
 
-
+  // Validate user metadata before submitting
   const validateMetadata = () => {
     let newErrors = {};
-    // Validate height
     if (isNaN(height) || height < 0 || height > 100) {
       newErrors.height = 'Height must be a number between 0 and 100.';
     }
-
-    // Validate weight
     if (isNaN(weight) || weight < 0 || weight > 500) {
       newErrors.weight = 'Weight must be a number between 0 and 500.';
     }
-
     setErrors(newErrors);
-    // If there are no errors, newErrors will be an empty object
     return Object.keys(newErrors).length === 0;
   };
 
 
-
+  // Handle submission of the modal form, send appropriate post request
   const handleSubmitModal = async () => {
-
-
-    if(!validateMetadata()){
-      return
+    if (!validateMetadata()) {
+      return;
     }
-    const metadata = {
-      height,
-      weight,
-      gender,
-    };
-
-
-
     try {
-      const accessToken = await getAccessTokenSilently(); // ensure you get the token inside the function
-      const response = await axios.post('https://dininginfobackend.azurewebsites.net/metadata/api/update_user', metadata, {
+      const accessToken = await getAccessTokenSilently();
+      const response = await axios.post('https://dininginfobackend.azurewebsites.net/metadata/api/update_user', {
+        height, weight, gender
+      }, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
       });
- 
-      console.log(response.data); // Log the response from the server
+      console.log(response.data);
       setShowModal(false);  
       window.location.reload();
     } catch (error) {
       console.error('Error submitting user metadata:', error);
-      
     }
-
   };
 
 
+  // Fetch a new access token when modal is closed (on update)
   useEffect(() => {
-    if (!showModal) { // This effect runs only when showModal becomes false
+    if (!showModal) {
       const printNewAccessToken = async () => {
         try {
           const newAccessToken = await getAccessTokenSilently({ ignoreCache: true });
           console.log('New Access Token:', newAccessToken);
-          console.log('User:',  user);
+          console.log('User:', user);
         } catch (error) {
           console.error('Error generating new access token:', error);
         }
       };
-
       printNewAccessToken();
     }
   }, [showModal, getAccessTokenSilently, user]);
 
-
   if (isLoading) {
-    return <div>Loading ...</div>;
+    return <div>Loading ...</div>; // Indicate loading status 
   }
 
   if (!isAuthenticated) {
-    return null;
+    return null; // Do not render anything if the user is not authenticated
   }
-
-
 
   return (
     <>
-      <Dropdown align="end">
-        <Dropdown.Toggle
-          id="dropdown-custom-components"
-          style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-          as="a"
-        >
-          <img
-            src={user.picture}
-            alt="Profile"
-            style={{ borderRadius: '50%', width: '50px', height: '50px' }}
-          />
-        </Dropdown.Toggle>
-
-        <Dropdown.Menu className="dropdown-menu-right" align="end">
-          <Dropdown.ItemText>{user.email}</Dropdown.ItemText>
-          <Dropdown.Divider />
-          <Dropdown.Item eventKey="1">My plan</Dropdown.Item>
-          <Dropdown.Item eventKey="2" onClick={handleShowModal}>Settings</Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Item eventKey="3" onClick={handleLogout}>
-            Log out
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>User Settings</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group controlId="formUserHeight">
-              <Form.Label>Height</Form.Label>
-              <Form.Control
-              type="text"
-              value={height}
-              onChange={handleHeightChange}
-              isInvalid={!!errors.height}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.height}
-            </Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group controlId="formUserWeight">
-              <Form.Label>Weight</Form.Label>
-              <Form.Control
-              type="text"
-              value={weight}
-              onChange={handleWeightChange}
-              isInvalid={!!errors.weight}
-            />
-            <Form.Control.Feedback type="invalid">
-              {errors.weight}
-            </Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group controlId="formUserGender">
-              <Form.Label>Gender</Form.Label> 
-              <Form.Select
-              value={gender}
-              onChange={handleGenderChange}
-            >
-              <option value="prefer_not_to_say">Prefer not to say</option>
-              <option value="other">Other</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </Form.Select>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleSubmitModal}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <UserProfile user={user} onShowModal={handleShowModal} onLogout={handleLogout} />
+      <UserModal
+        showModal={showModal}
+        onCloseModal={handleCloseModal}
+        height={height}
+        weight={weight}
+        gender={gender}
+        errors={errors}
+        onHeightChange={handleHeightChange}
+        onWeightChange={handleWeightChange}
+        onGenderChange={handleGenderChange}
+        onSubmitModal={handleSubmitModal}
+      />
     </>
   );
 };
