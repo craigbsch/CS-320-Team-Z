@@ -7,7 +7,7 @@ import {
 } from "../components";
 import Container from "react-bootstrap/Container";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosFASTAPI from "../api/common";
 import { useDispatch } from "react-redux";
 import { setMenu } from "../redux/menuSlice";
 
@@ -23,22 +23,41 @@ const ViewMenuPage = () => {
 
 	//Hook to access data from the database, updates whenever the date, hall, or day variables change
 	useEffect(() => {
-		axios
-			.get(
-				`https://dininginfobackend.azurewebsites.net/menu?dining_hall=${hall}&date_served=${
-					new Date(
-						new Date().setDate(new Date().getDate() + day - new Date().getDay()) //Gets date +/- day of the week selected
-					)
-						.toISOString()
-						.split("T")[0]
-				}`
-			)
+		axiosFASTAPI({
+			method: "get",
+			url: "/menu",
+			params: {
+				dining_hall: hall,
+				date_served: new Date(
+					new Date().setDate(new Date().getDate() + day - new Date().getDay()) //Gets date +/- day of the week selected
+				)
+					.toISOString()
+					.split("T")[0],
+			},
+		})
 			.then((response) => {
 				dispatch(setMenu(response.data));
 			})
 			.catch((error) => {
 				console.error("Error fetching tasks:", error);
 			});
+
+		// axios
+		// 	.get(
+		// 		`https://dininginfobackend.azurewebsites.net/menu?dining_hall=${hall}&date_served=${
+		// 			new Date(
+		// 				new Date().setDate(new Date().getDate() + day - new Date().getDay()) //Gets date +/- day of the week selected
+		// 			)
+		// 				.toISOString()
+		// 				.split("T")[0]
+		// 		}`
+		// 	)
+		// 	.then((response) => {
+		// 		dispatch(setMenu(response.data));
+		// 	})
+		// 	.catch((error) => {
+		// 		console.error("Error fetching tasks:", error);
+		// 	});
 	}, [hall, dispatch, day]);
 
 	return (
