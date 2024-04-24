@@ -25,7 +25,15 @@ const Profile = () => {
 
 
   const handleLogout = () => logout({ returnTo: window.location.origin });
-  const handleShowModal = () => setShowModal(true);
+  const handleShowModal = () => {
+    // Set the state to default values when opening the modal
+    setHeight(user.custom_metadata?.height || '');
+    setWeight(user.custom_metadata?.weight || '');
+    setGender(user.custom_metadata?.gender || 'prefer_not_to_say');
+    
+    setShowModal(true);
+  };
+  
   const handleCloseModal = () => setShowModal(false);
 
 
@@ -74,6 +82,7 @@ const Profile = () => {
  
       console.log(response.data); // Log the response from the server
       setShowModal(false);  
+      window.location.reload();
     } catch (error) {
       console.error('Error submitting user metadata:', error);
       
