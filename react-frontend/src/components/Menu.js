@@ -4,10 +4,14 @@ import { Table } from "react-bootstrap";
 import { selectMenu } from "../redux/menuSlice";
 import "../styling/Menu.css";
 import RestrictionSelector from "./RestrictionSelector";
+import Button from 'react-bootstrap/Button';
 
 const Menu = (props) => {
 	let menuItems = useSelector(selectMenu);
 	const [open, setOpen] = useState({}); // State to track open rows
+    const [sortDirectionCalories, setSortDirectionCalories] = useState('asc'); // State to track sort direction
+	const [sortDirectionNames, setSortDirectionNames] = useState('asc'); // State to track sort direction
+    const [sortBy, setSortBy] = useState(''); // State to track sorting criteria
 
 	//Collects all present allergens
 	const updateAllergens = () => {
@@ -57,12 +61,56 @@ const Menu = (props) => {
 		return Array.from(set).join(", ");
 	};
 
+
+	//sorts table by # of calories or name
+	const sortMenu = (menu, sortBy) => {
+        return [...menu].sort((a, b) => {
+
+			//calories
+			if (sortBy === 'calories') {
+				
+				if (sortDirectionCalories === 'asc') {
+					return a.calories - b.calories;
+				} else {
+					return b.calories - a.calories;
+				}
+
+			//name
+			} else if (sortBy === 'mealName') {
+
+				if (sortDirectionNames === 'asc') {
+					return a.meal_name.localeCompare(b.meal_name);
+				} else {
+					return b.meal_name.localeCompare(a.meal_name);
+				}
+			}
+        });
+    };
+
+	//sets sortBy state when button is clicked
+	const handleSortByCalories = () => {
+		setSortBy('calories');
+		setSortDirectionCalories(sortDirectionCalories === 'asc' ? 'desc' : 'asc');
+	};
+	
+	const handleSortByMealName = () => {
+		setSortBy('mealName');
+		setSortDirectionNames(sortDirectionNames === 'asc' ? 'desc' : 'asc');
+	};	
+
+	const sortedMenu = useMemo(() => sortMenu(menuTOD[props.menuTime], sortBy), [menuTOD, props.menuTime, sortDirectionCalories, sortDirectionNames, sortBy]);
+
+
 	return (
 		<Table striped bordered hover responsive>
 			<thead>
 				<tr>
-					<th>Meal Name</th>
-					<th>Calories</th>
+					<th>
+						<Button variant="primary" onClick={handleSortByMealName}  >Meal Name {sortDirectionNames === 'asc' ? ' ▲' : ' ▼'} </Button>{''}
+					</th>
+					<th>
+					<Button variant="primary" onClick={handleSortByCalories} >Calories {sortDirectionCalories === 'asc' ? ' ▲' : ' ▼'} </Button>{''}
+					</th>
 					<th>
 						{" "}
 						<RestrictionSelector
@@ -74,7 +122,7 @@ const Menu = (props) => {
 				</tr>
 			</thead>
 			<tbody>
-				{menuTOD[props.menuTime].map((item, index) => (
+				{sortedMenu.map((item, index) => (
 					<React.Fragment key={`item-${index}`}>
 						<tr onClick={() => toggleRow(index)}>
 							<td>{item.meal_name}</td>
