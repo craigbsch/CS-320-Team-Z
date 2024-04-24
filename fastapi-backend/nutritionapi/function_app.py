@@ -22,4 +22,4 @@ app.include_router(menu_router, prefix="/menu")
 app.include_router(nutrition_router, prefix="/nutrition")
 app.include_router(metadata_router, prefix="/metadata")
 # when running locally comment this line out
-#app = func.AsgiFunctionApp(app=app, http_auth_level=func.AuthLevel.ANONYMOUS)
+app = func.AsgiFunctionApp(app=app, http_auth_level=func.AuthLevel.ANONYMOUS)
