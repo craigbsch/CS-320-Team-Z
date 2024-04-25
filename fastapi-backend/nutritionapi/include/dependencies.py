@@ -1,9 +1,12 @@
+from auth0.authentication import GetToken
+from auth0.management import Auth0
 from fastapi import HTTPException, Depends
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from jose import jwt, JWTError
 from urllib.request import urlopen
 import json
-from include.config import AUTH0_DOMAIN, ALGORITHMS, API_AUDIENCE
+from include.config import AUTH0_DOMAIN, ALGORITHMS, API_AUDIENCE, AUTH0_CLIENT_ID, AUTH0_SECRET
+
 
 oauth2_scheme = OAuth2AuthorizationCodeBearer(
     authorizationUrl=f"https://{AUTH0_DOMAIN}/authorize",
@@ -36,3 +39,13 @@ def get_token_auth_header(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Invalid token")
     except Exception as e:
         raise HTTPException(status_code=401, detail="Unable to parse authentication token.")
+    
+
+
+def get_auth0():
+    get_token = GetToken(AUTH0_DOMAIN, AUTH0_CLIENT_ID, client_secret=AUTH0_SECRET)
+    token = get_token.client_credentials('https://{}/api/v2/'.format(AUTH0_DOMAIN))
+    mgmt_api_token = token['access_token']
+    auth0 = Auth0(AUTH0_DOMAIN, token['access_token'])
+    auth0 = Auth0(AUTH0_DOMAIN, mgmt_api_token)
+    return auth0

@@ -1,110 +1,158 @@
 import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
-import { Dropdown, Modal, Button, Form } from 'react-bootstrap';
-import "../styling/Profile.css"
+import UserProfile from "./userdropdown/UserProfile";
+import UserModal from "./userdropdown/UserModal";
+import "../styling/Profile.css";
+import { Alert, Spinner } from "react-bootstrap";
+import axiosFASTAPI from "../api/common";
 
 const Profile = () => {
-  const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0();
-  const [showModal, setShowModal] = useState(false);
+	const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } =
+		useAuth0();
 
-  useEffect(() => {
-    const fetchAccessToken = async () => {
-      try {
-        const accessToken = await getAccessTokenSilently();
-        console.log("Access Token:", accessToken);
-      } catch (error) {
-        console.error("Error fetching access token:", error);
-      }
-    };
+	// State management for showing the modal and storing user metadata
+	const [showModal, setShowModal] = useState(false);
+	const [height, setHeight] = useState(user.custom_metadata?.height || "");
+	const [weight, setWeight] = useState(user.custom_metadata?.weight || "");
+	const [gender, setGender] = useState(
+		user.custom_metadata?.gender || "prefer_not_to_say"
+	);
+	const [errors, setErrors] = useState({});
 
-    if (isAuthenticated) {
-      fetchAccessToken();
-    }
-  }, [isAuthenticated, getAccessTokenSilently]);
+	// Event handlers for form inputs
+	const handleHeightChange = (e) => setHeight(e.target.value);
+	const handleWeightChange = (e) => setWeight(e.target.value);
+	const handleGenderChange = (e) => setGender(e.target.value);
+	const handleLogout = () => logout({ returnTo: window.location.origin });
 
-  const handleLogout = () => logout({ returnTo: window.location.origin });
-  const handleShowModal = () => setShowModal(true);
-  const handleCloseModal = () => setShowModal(false);
+	// ensure default values are user metadata
+	const handleShowModal = () => {
+		setHeight(user.custom_metadata?.height || "");
+		setWeight(user.custom_metadata?.weight || "");
+		setGender(user.custom_metadata?.gender || "prefer_not_to_say");
+		setShowModal(true);
+	};
 
-  if (isLoading) {
-    return <div>Loading ...</div>;
-  }
+	// States for managing alert and loading status for submission
+	const [isLoadingSubmit, setLoadingSubmit] = useState(false);
+	const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', or null
 
-  if (!isAuthenticated) {
-    return null;
-  }
+	// Hide modal and reset values to their initial states
+	const handleCloseModal = () => {
+		setShowModal(false);
+	};
 
-  const testEndpoint = () => {
-    // Test endpoint functionality
-  }
+	// Validate user metadata before submitting
+	const validateMetadata = () => {
+		let newErrors = {};
+		if (isNaN(height) || height < 0 || height > 100) {
+			newErrors.height = "Height must be a number between 0 and 100.";
+		}
+		if (isNaN(weight) || weight < 0 || weight > 500) {
+			newErrors.weight = "Weight must be a number between 0 and 500.";
+		}
+		setErrors(newErrors);
+		return Object.keys(newErrors).length === 0;
+	};
 
-  console.log(user);
+	// Handle submission of the modal form, send appropriate post request
+	const handleSubmitModal = async () => {
+		if (!validateMetadata()) {
+			return;
+		}
+		setLoadingSubmit(true);
+		setSubmitStatus(null);
+		try {
+			const accessToken = await getAccessTokenSilently();
+			const response = await axiosFASTAPI.post(
+				"/metadata/api/update_user",
+				{
+					height,
+					weight,
+					gender,
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${accessToken}`,
+						"Content-Type": "application/json",
+					},
+				}
+			);
+			console.log(response.data);
+			console.log("Old Access Token:", accessToken);
+			setShowModal(false);
+			setSubmitStatus({ type: "success", message: "Submission Successful!" });
+			setTimeout(() => setSubmitStatus(null), 3000);
 
-  return (
-    <>
-      <Dropdown align="end">
-        <Dropdown.Toggle
-          id="dropdown-custom-components"
-          style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-          as="a"
-        >
-          <img
-            src={user.picture}
-            alt="Profile"
-            style={{ borderRadius: '50%', width: '50px', height: '50px' }}
-          />
-        </Dropdown.Toggle>
+			const newAccessToken = await getAccessTokenSilently({ cacheMode: "off" }); // Fetch a new access token when modal is closed (on update), update values
+			console.log("New Access Token:", newAccessToken);
+		} catch (error) {
+			console.error("Error submitting user metadata:", error);
+			setSubmitStatus({ type: "danger", message: "Error submitting data!" });
+			setTimeout(() => setSubmitStatus(null), 3000);
+		} finally {
+			setLoadingSubmit(false);
+		}
+	};
 
-        <Dropdown.Menu className="dropdown-menu-right" align="end">
-          <Dropdown.ItemText>{user.email}</Dropdown.ItemText>
-          <Dropdown.Divider />
-          <Dropdown.Item eventKey="1">My plan</Dropdown.Item>
-          <Dropdown.Item eventKey="2" onClick={handleShowModal}>Settings</Dropdown.Item>
-          <Dropdown.Item eventKey="3" onClick={testEndpoint}>Test Endpoint</Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Item eventKey="4" onClick={handleLogout}>
-            Log out
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
+	if (isLoading) {
+		return <div>Loading ...</div>; // Indicate loading status
+	}
 
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>User Settings</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group controlId="formUserName">
-              <Form.Label>Height</Form.Label>
-              <Form.Control type="text" defaultValue={user.custom_metadata.height} />
-            </Form.Group>
-            <Form.Group controlId="formUserNickname">
-              <Form.Label>Weight</Form.Label>
-              <Form.Control type="text" defaultValue={user.custom_metadata.weight} />
-            </Form.Group>
-            <Form.Group controlId="formUserGender">
-              <Form.Label>Gender</Form.Label>
-              <Form.Select defaultValue={user.custom_metadata.gender}>
-                <option value="prefer_not_to_say">Prefer not to say</option>
-                <option value="other">Other</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </Form.Select>
-            </Form.Group>
-            {/* Add more user metadata fields here as needed */}
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Close
-          </Button>
-          <Button variant="primary">
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
-  );
+	if (!isAuthenticated) {
+		return null; // Do not render anything if the user is not authenticated
+	}
+
+	return (
+		<>
+			<UserProfile
+				user={user}
+				onShowModal={handleShowModal}
+				onLogout={handleLogout}
+			/>
+			<UserModal
+				showModal={showModal}
+				onCloseModal={handleCloseModal}
+				height={height}
+				weight={weight}
+				gender={gender}
+				errors={errors}
+				onHeightChange={handleHeightChange}
+				onWeightChange={handleWeightChange}
+				onGenderChange={handleGenderChange}
+				onSubmitModal={handleSubmitModal}
+			/>
+			{isLoadingSubmit && (
+				<div
+					style={{
+						position: "fixed",
+						top: "50%",
+						left: "50%",
+						transform: "translate(-50%, -50%)",
+						zIndex: 1060, // Ensure this is above the modal z-index
+					}}
+				>
+					<Spinner animation='border' variant='primary' />
+				</div>
+			)}
+			{submitStatus && (
+				<Alert
+					variant={submitStatus.type}
+					className={`custom-alert custom-alert-${submitStatus.type}`}
+					style={{
+						position: "fixed",
+						bottom: "10px",
+						left: "10%",
+						right: "10%",
+						textAlign: "center",
+						zIndex: 1060,
+					}}
+				>
+					{submitStatus.message}
+				</Alert>
+			)}
+		</>
+	);
 };
 
 export default Profile;
