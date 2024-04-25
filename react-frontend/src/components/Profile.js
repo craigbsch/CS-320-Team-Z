@@ -8,8 +8,7 @@ import { Alert, Spinner } from 'react-bootstrap';
 
 
 const Profile = () => {
-
-  const {user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0();
+  const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0();
 
 
   // State management for showing the modal and storing user metadata
@@ -18,6 +17,7 @@ const Profile = () => {
   const [weight, setWeight] = useState(user.custom_metadata?.weight || '');
   const [gender, setGender] = useState(user.custom_metadata?.gender || 'prefer_not_to_say');
   const [errors, setErrors] = useState({});
+
 
   // Event handlers for form inputs
   const handleHeightChange = (e) => setHeight(e.target.value);
@@ -79,13 +79,14 @@ const Profile = () => {
           'Content-Type': 'application/json',
         },
       });
-
+      console.log(response.data);
+      console.log("Old Access Token:", accessToken);
       setShowModal(false);
-      console.log(response);
       setSubmitStatus({ type: 'success', message: 'Submission Successful!' });
       setTimeout(() => setSubmitStatus(null), 3000);
 
-      await getAccessTokenSilently({cacheMode: 'off'});  // Fetch a new access token when modal is closed (on update), update values
+      const newAccessToken = await getAccessTokenSilently({cacheMode: 'off'});  // Fetch a new access token when modal is closed (on update), update values
+      console.log('New Access Token:', newAccessToken);
 
     } catch (error) {
       console.error('Error submitting user metadata:', error);
