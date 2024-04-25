@@ -11,3 +11,9 @@ class Meal(BaseModel):
     allergens: object
     dining_hall: str
     meal_type: str
+
+
+class Metadata(BaseModel):
+    gender: str
+    height: str
+    weight: str
