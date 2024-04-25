@@ -25,34 +25,24 @@ const ViewMenuPage = () => {
 
 	//Hook to access data from the database, updates whenever the date, hall, or day variables change
 	useEffect(() => {
-		try {
-			const getAccessToken = async () => {
-				return await getAccessTokenSilently();
-			};
-
-			axiosFASTAPI({
-				method: "get",
-				url: "/menu",
-				params: {
-					dining_hall: hall,
-					date_served: new Date(
-						new Date().setDate(new Date().getDate() + day - new Date().getDay()) //Gets date +/- day of the week selected
-					)
-						.toISOString()
-						.split("T")[0],
-				},
-				headers: {
-					Authorization: `Bearer ${getAccessToken()}`,
-					"Content-Type": "application/json",
-				},
+		axiosFASTAPI({
+			method: "get",
+			url: "/menu",
+			params: {
+				dining_hall: hall,
+				date_served: new Date(
+					new Date().setDate(new Date().getDate() + day - new Date().getDay()) //Gets date +/- day of the week selected
+				)
+					.toISOString()
+					.split("T")[0],
+			},
+		})
+			.then((response) => {
+				dispatch(setMenu(response.data));
 			})
-				.then((response) => {
-					dispatch(setMenu(response.data));
-				})
-				.catch((error) => {
-					console.error("Error fetching tasks:", error);
-				});
-		} catch {}
+			.catch((error) => {
+				console.error("Error fetching tasks:", error);
+			});
 	}, [hall, dispatch, day, getAccessTokenSilently]);
 
 	return (
