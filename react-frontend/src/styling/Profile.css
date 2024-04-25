@@ -2,9 +2,6 @@
     display: none !important; 
   }
 
-
-
-
   .custom-alert-danger {
     background-color: #8e0707 !important; /* red */
     color: white !important;

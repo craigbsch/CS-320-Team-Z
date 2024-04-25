@@ -8,7 +8,8 @@ import { Alert, Spinner } from 'react-bootstrap';
 
 
 const Profile = () => {
-  const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0();
+
+  const {user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0();
 
 
   // State management for showing the modal and storing user metadata
@@ -18,13 +19,22 @@ const Profile = () => {
   const [gender, setGender] = useState(user.custom_metadata?.gender || 'prefer_not_to_say');
   const [errors, setErrors] = useState({});
 
-
   // Event handlers for form inputs
   const handleHeightChange = (e) => setHeight(e.target.value);
   const handleWeightChange = (e) => setWeight(e.target.value);
   const handleGenderChange = (e) => setGender(e.target.value);
   const handleLogout = () => logout({ returnTo: window.location.origin });
-  const handleShowModal = () => setShowModal(true);
+
+  // ensure default values are user metadata
+  const handleShowModal = () => {
+    
+    setHeight(user.custom_metadata?.height || '');
+    setWeight(user.custom_metadata?.weight || '');
+    setGender(user.custom_metadata?.gender || 'prefer_not_to_say');    
+    setShowModal(true);
+
+  }
+
   
 
   // States for managing alert and loading status for submission
@@ -69,11 +79,13 @@ const Profile = () => {
           'Content-Type': 'application/json',
         },
       });
-      console.log(response.data);
+
       setShowModal(false);
-      window.location.reload();
+      console.log(response);
       setSubmitStatus({ type: 'success', message: 'Submission Successful!' });
       setTimeout(() => setSubmitStatus(null), 3000);
+
+      await getAccessTokenSilently({cacheMode: 'off'});  // Fetch a new access token when modal is closed (on update), update values
 
     } catch (error) {
       console.error('Error submitting user metadata:', error);
@@ -84,29 +96,6 @@ const Profile = () => {
     }
   };
   
-  // Fetch a new access token when modal is closed (on update), update values
-  useEffect(() => {
-    if (!showModal) {
-
-      setHeight(user.custom_metadata?.height || '');
-      setWeight(user.custom_metadata?.weight || '');
-      setGender(user.custom_metadata?.gender || 'prefer_not_to_say');
-
-
-      const printNewAccessToken = async () => {
-        try {
-          const newAccessToken = await getAccessTokenSilently({ ignoreCache: true });
-          console.log('New Access Token:', newAccessToken);
-          console.log('User:', user);
-        } catch (error) {
-          console.error('Error generating new access token:', error);
-        }
-      };
-      printNewAccessToken();
-
-      
-    }
-  }, [showModal, getAccessTokenSilently, user]);
 
   if (isLoading) {
     return <div>Loading ...</div>; // Indicate loading status 
