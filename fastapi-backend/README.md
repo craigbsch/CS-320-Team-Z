@@ -15,4 +15,4 @@ For running the api, simply pip install requirements and then uvicorn function_a
 
 
 The backend is deployed on Azure and not necessary to deploy locally to view the site, see react-front-end. 
-If necessary, ask for the env files and they can be provided dbInfoDocker.env in the root directory of docker-scraper and dbInfo.env in nutritionapi 
+If necessary, ask for the env files and they can be provided (dbInfoDocker.env in the root directory of docker-scraper and dbInfo.env in nutritionapi)
