@@ -5,7 +5,7 @@ import UserModal from './userdropdown/UserModal';
 import axios from 'axios';
 import '../styling/Profile.css';
 import { Alert, Spinner } from 'react-bootstrap';
-
+import axiosFASTAPI from "../api/common";
 
 const Profile = () => {
   const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0();
@@ -70,15 +70,21 @@ const Profile = () => {
     setLoadingSubmit(true);
     setSubmitStatus(null);
     try {
-      const accessToken = await getAccessTokenSilently();
-      const response = await axios.post('https://dininginfobackend.azurewebsites.net/metadata/api/update_user', {
-        height, weight, gender
-      }, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
+		const accessToken = await getAccessTokenSilently();
+		const response = await axiosFASTAPI.post(
+			"/metadata/api/update_user",
+			{
+				height,
+				weight,
+				gender,
+			},
+			{
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					"Content-Type": "application/json",
+				},
+			}
+		);
       console.log(response.data);
       console.log("Old Access Token:", accessToken);
       setShowModal(false);
