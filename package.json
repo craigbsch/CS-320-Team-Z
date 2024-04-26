@@ -1,0 +1,19 @@
+{
+  "name": "cs-320-team-z-1",
+  "version": "1.0.0",
+  "description": "UMass Nutritional Tracker is a Webapp in construction. An improved version of the UMass Dining app, this seeks to be the premier app for students accessing dining information. It is constructed by web-scraping the dining site, and then filtering the data into a usable form for our users.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/craigbsch/CS-320-Team-Z.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/craigbsch/CS-320-Team-Z/issues"
+  },
+  "homepage": "https://github.com/craigbsch/CS-320-Team-Z#readme"
+}
