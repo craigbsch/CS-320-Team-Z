@@ -14,4 +14,5 @@ For x86 OS's, can simply build through a Linux VM (building to amd64). For testi
 For running the api, simply pip install requirements and then uvicorn function_app:app --reload
 
 
-The backend is deployed on Azure and not necessary to deploy locally to view the site, see react-front-end.
+The backend is deployed on Azure and not necessary to deploy locally to view the site, see react-front-end. 
+If necessary, ask for the env files and they can be provided dbInfoDocker.env in the root directory of docker-scraper and dbInfo.env in nutritionapi 
