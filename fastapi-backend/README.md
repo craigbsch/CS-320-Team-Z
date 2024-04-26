@@ -17,6 +17,8 @@ For running the api, simply pip install requirements and then uvicorn function_a
 The backend is deployed on Azure and not necessary to deploy locally to view the site, see react-front-end. 
 If necessary, ask for the env files and they can be provided (dbInfoDocker.env in the root directory of docker-scraper and dbInfo.env in nutritionapi)
 
+Docs can be found at https://dininginfobackend.azurewebsites.net/docs 
+
 
 
 Our database structure is fairly simple. We have two different tables, one storing history of users and nutrtional information, and another with 2 weeks of meals. We had considered linking these together such that you can find the corresponding meal in the meal_info db (from nutrition_info), but due to the large variety of meals we decided to only store ~2 weeks of meals at a given time, while storing a user's total nutritional history, thus making it preferable to simply copy over the meal information. User accounts are not stored on our mySQL database but instead on Auth0's, which handles encryption as well as secure access for us. Authenticating through their servers, we ensure the user is valid and then are able to access their nutrition corresponding to their id. Attached are images of our database structure.
