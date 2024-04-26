@@ -83,10 +83,17 @@ const Profile = () => {
       console.log("Old Access Token:", accessToken);
       setShowModal(false);
       setSubmitStatus({ type: 'success', message: 'Submission Successful!' });
+      setLoadingSubmit(false);
+
       setTimeout(() => setSubmitStatus(null), 3000);
 
-      const newAccessToken = await getAccessTokenSilently({cacheMode: 'off'});  // Fetch a new access token when modal is closed (on update), update values
-      console.log('New Access Token:', newAccessToken);
+      const refreshToken = await getAccessTokenSilently({
+        cacheMode: "off",
+        grant: "refresh_token",
+        detailedResponse: true,
+    })
+     // Fetch a new access token when modal is closed (on update), update values
+      console.log('New Access Token:', refreshToken);
 
     } catch (error) {
       console.error('Error submitting user metadata:', error);
