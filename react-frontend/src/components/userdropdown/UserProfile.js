@@ -1,7 +1,10 @@
 import React from 'react';
 import { Dropdown } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
-const UserProfile = ({ user, onShowModal, onLogout }) => (
+const UserProfile = ({ user, onShowModal, onLogout }) => {
+  let navigate = useNavigate();
+  return (
   <Dropdown align="end">
     <Dropdown.Toggle
       id="dropdown-custom-components"
@@ -20,12 +23,22 @@ const UserProfile = ({ user, onShowModal, onLogout }) => (
       <Dropdown.Divider />
       <Dropdown.Item eventKey="1">My plan</Dropdown.Item>
       <Dropdown.Item eventKey="2" onClick={onShowModal}>Settings</Dropdown.Item>
+      <Dropdown.Item
+  eventKey="3"
+  onClick={() => {
+    navigate("/nutritionHistory");
+  }}
+>
+  My history
+</Dropdown.Item>
       <Dropdown.Divider />
-      <Dropdown.Item eventKey="3" onClick={onLogout}>
+      <Dropdown.Item eventKey="4" onClick={onLogout}>
         Log out
       </Dropdown.Item>
     </Dropdown.Menu>
   </Dropdown>
-);
+)};
 
 export default UserProfile;
+
+//<Dropdown.Item eventKey="3" onClick={}>My history</Dropdown.Item>
