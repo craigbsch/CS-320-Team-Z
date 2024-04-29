@@ -1,6 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
-import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  LinearScale,
+  BarController,
+  BarElement
+} from 'chart.js';
+import {Bar} from "react-chartjs-2"
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  BarController,
+  BarElement
+);
 
 const NutritionHistoryPage = () => {
   const [foods, setFoods] = useState([]);
