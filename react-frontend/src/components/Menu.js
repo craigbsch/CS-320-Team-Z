@@ -8,7 +8,6 @@ import RestrictionSelector from "./RestrictionSelector";
 const Menu = (props) => {
 	let menuItems = useSelector(selectMenu);
 	const [open, setOpen] = useState({}); // State to track open rows
-	const [selectedItems, setSelectedItems] = useState([]); // State to track selected items
 
 	// Collects all present allergens
 	const updateAllergens = () => {
@@ -53,16 +52,16 @@ const Menu = (props) => {
 
 	const handleAddItem = (item, e) => {
 		e.stopPropagation(); // Stop event propagation
-		setSelectedItems([...selectedItems, item]);
+		props.setSelectedItems([...props.selectedItems, item]);
 	};
 
 	const handleRemoveItem = (item, e) => {
 		e.stopPropagation(); // Stop event propagation
-		const index = selectedItems.indexOf(item);
+		const index = props.selectedItems.indexOf(item);
 		if (index !== -1) {
-			const updatedItems = [...selectedItems];
+			const updatedItems = [...props.selectedItems];
 			updatedItems.splice(index, 1);
-			setSelectedItems(updatedItems);
+			props.setSelectedItems(updatedItems);
 		}
 	};
 
@@ -94,7 +93,7 @@ const Menu = (props) => {
 										<Button
 											onClick={(e) => handleRemoveItem(item, e)}
 											disabled={
-												selectedItems.filter(
+												props.selectedItems.filter(
 													(selectedItem) => selectedItem === item
 												).length === 0
 											}
@@ -107,7 +106,7 @@ const Menu = (props) => {
 									<span style={{ marginRight: "8px" }}>
 										{/* Display quantity */}
 										{
-											selectedItems.filter(
+											props.selectedItems.filter(
 												(selectedItem) => selectedItem === item
 											).length
 										}

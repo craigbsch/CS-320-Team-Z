@@ -21,6 +21,7 @@ const ViewMenuPage = () => {
 	const [allergens, setAllergens] = useState(new Set());
 	const [restrictions, setRestrictions] = useState(new Set()); //Can add import here for user data once setup to remember filters
 	const [mealTypes, setMealTypes] = useState([]);
+	const [selectedItems, setSelectedItems] = useState([]); // State to track selected items
 
 	//Hook to access data from the database, updates whenever the date, hall, or day variables change
 	useEffect(() => {
@@ -87,8 +88,13 @@ const ViewMenuPage = () => {
 				setAllergens={setAllergens}
 				restrictions={restrictions}
 				setRestrictions={setRestrictions}
+				selectedItems={selectedItems}
+				setSelectedItems={setSelectedItems}
 			/>
-			<SubmitMeals />
+			<SubmitMeals
+				selectedItems={selectedItems}
+				setSelectedItems={setSelectedItems}
+			/>
 		</Container>
 	);
 };
