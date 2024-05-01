@@ -21,7 +21,9 @@ const UserProfile = ({ user, onShowModal, onLogout }) => {
     <Dropdown.Menu className="dropdown-menu-right" align="end">
       <Dropdown.ItemText>{user.email}</Dropdown.ItemText>
       <Dropdown.Divider />
-      <Dropdown.Item eventKey="1">Nutrition History onClick({() => navigate("/nutritionHistory")})</Dropdown.Item>
+      <Dropdown.Item eventKey="1" onClick={() => navigate("/nutritionHistory")}>
+  Nutrition History
+      </Dropdown.Item>      
       <Dropdown.Item eventKey="2" onClick={onShowModal}>Settings</Dropdown.Item>
       <Dropdown.Divider />
       <Dropdown.Item eventKey="4" onClick={onLogout}>
