@@ -1,66 +1,82 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import UserProfile from './userdropdown/UserProfile';
 import UserModal from './userdropdown/UserModal';
-import axios from 'axios';
 import '../styling/Profile.css';
 import { Alert, Spinner } from 'react-bootstrap';
-import axiosFASTAPI from "../api/common";
-
-const Profile = () => {
-  const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0();
+import axios from "../api/common";
 
 
-  // State management for showing the modal and storing user metadata
-  const [showModal, setShowModal] = useState(false);
-  const [height, setHeight] = useState(user.custom_metadata?.height || '');
-  const [weight, setWeight] = useState(user.custom_metadata?.weight || '');
-  const [gender, setGender] = useState(user.custom_metadata?.gender || 'prefer_not_to_say');
-  const [errors, setErrors] = useState({});
-
-
-  // Event handlers for form inputs
-  const handleHeightChange = (e) => setHeight(e.target.value);
-  const handleWeightChange = (e) => setWeight(e.target.value);
-  const handleGenderChange = (e) => setGender(e.target.value);
-  const handleLogout = () => logout({ returnTo: window.location.origin });
-
-  // ensure default values are user metadata
-  const handleShowModal = () => {
-    
-    setHeight(user.custom_metadata?.height || '');
-    setWeight(user.custom_metadata?.weight || '');
-    setGender(user.custom_metadata?.gender || 'prefer_not_to_say');    
-    setShowModal(true);
-
-  }
-
+const Profile = ({ userComponent: UserComponent, defaultActiveTab = "personal" }) => {  
   
+  // State management for showing the modal and storing user metadata
+  const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0();
+  const [showModal, setShowModal] = useState(false);
+  const [userData, setUserData] = useState({
+    height: '',
+    weight: '',
+    age: '',
+    gender: 'prefer_not_to_say',
+    calories: '',
+    carbohydrates: '',
+    protein: '',
+    fat: ''
+  });
+
+  const [errors, setErrors] = useState({});
 
   // States for managing alert and loading status for submission
   const [isLoadingSubmit, setLoadingSubmit] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', or null
+  const [submitStatus, setSubmitStatus] = useState(null);
+
+// Event handler for form inputs
+  const handleChange = (field) => (e) => {
+    setUserData({ ...userData, [field]: e.target.value });
+  };
+
+  const handleLogout = () => logout({ returnTo: window.location.origin });
 
 
+  const handleShowModal = () => {
+    setUserData({
+      ...userData,
+      height: user.custom_metadata?.height || '',  // Always fetch the latest info from user metadata
+      weight: user.custom_metadata?.weight || '',
+      age: user.custom_metadata?.age || '',
+      gender: user.custom_metadata?.gender || 'prefer_not_to_say',
+      calories: user.custom_metadata?.goals?.calories || '',
+      carbohydrates: user.custom_metadata?.goals?.carbohydrates || '',
+      protein: user.custom_metadata?.goals?.protein || '',
+      fat: user.custom_metadata?.goals?.fat || ''
+    });
+    setShowModal(true);
+  };
 
-  // Hide modal and reset values to their initial states
-  const handleCloseModal = () => {
-    setShowModal(false);
-  }
 
 
   // Validate user metadata before submitting
   const validateMetadata = () => {
+    const fieldSpecifications = [
+      { field: 'height', min: 0, max: 100, unit: 'Height' },
+      { field: 'weight', min: 0, max: 500, unit: 'Weight' },
+      { field: 'age', min: 13, max: 150, unit: 'Age' },
+      { field: 'calories', min: 0, max: 10000, unit: 'Calories' },
+      { field: 'carbohydrates', min: 0, max: 1000, unit: 'Carbohydrates' },
+      { field: 'protein', min: 0, max: 500, unit: 'Protein' },
+      { field: 'fat', min: 0, max: 300, unit: 'Fat' }
+    ];
+  
     let newErrors = {};
-    if (isNaN(height) || height < 0 || height > 100) {
-      newErrors.height = 'Height must be a number between 0 and 100.';
-    }
-    if (isNaN(weight) || weight < 0 || weight > 500) {
-      newErrors.weight = 'Weight must be a number between 0 and 500.';
-    }
+    fieldSpecifications.forEach(({ field, min, max, unit }) => {
+      const value = userData[field];
+      if (isNaN(value) || value === "" || value < min || value > max) {
+        newErrors[field] = `${unit} must be a number between ${min} and ${max}.`;
+      }
+    });
+  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  
 
   // Handle submission of the modal form, send appropriate post request
   const handleSubmitModal = async () => {
@@ -70,36 +86,48 @@ const Profile = () => {
     setLoadingSubmit(true);
     setSubmitStatus(null);
     try {
-		const accessToken = await getAccessTokenSilently();
-		const response = await axiosFASTAPI.post(
-			"/metadata/api/update_user",
-			{
-				height,
-				weight,
-				gender,
-			},
-			{
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-					"Content-Type": "application/json",
-				},
-			}
-		);
-      console.log(response.data);
-      console.log("Old Access Token:", accessToken);
+      const accessToken = await getAccessTokenSilently();
+      await axios.post(
+        "/metadata/api/update_user",
+        {
+          gender: userData.gender,
+          height: userData.height,
+          age: userData.age,
+          weight: userData.weight
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      await axios.post(
+        "/metadata/api/update_goals",
+        {
+          calories: userData.calories,
+          carbohydrates: userData.carbohydrates,
+          protein: userData.protein,
+          fat: userData.fat
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       setShowModal(false);
       setSubmitStatus({ type: 'success', message: 'Submission Successful!' });
       setLoadingSubmit(false);
 
       setTimeout(() => setSubmitStatus(null), 3000);
 
-      const refreshToken = await getAccessTokenSilently({
-        cacheMode: "off",
-        grant: "refresh_token",
-        detailedResponse: true,
-    })
-     // Fetch a new access token when modal is closed (on update), update values
-      console.log('New Access Token:', refreshToken);
+       // Fetch a new access token when modal is closed (on update), update values
+      await getAccessTokenSilently({ cacheMode: "off", grant: "refresh_token", detailedResponse: true})
+    
 
     } catch (error) {
       console.error('Error submitting user metadata:', error);
@@ -112,7 +140,7 @@ const Profile = () => {
   
 
   if (isLoading) {
-    return <div>Loading ...</div>; // Indicate loading status 
+    return <div>Loading...</div>; // Indicate loading status 
   }
 
   if (!isAuthenticated) {
@@ -121,20 +149,18 @@ const Profile = () => {
 
   return (
     <>
-      <UserProfile user={user} onShowModal={handleShowModal} onLogout={handleLogout} />
-      <UserModal
+    {UserComponent && <UserComponent user={user} onShowModal={handleShowModal} onLogout={handleLogout} />}      
+    <UserModal
         showModal={showModal}
-        onCloseModal={handleCloseModal}
-        height={height}
-        weight={weight}
-        gender={gender}
+        onCloseModal={() => setShowModal(false)}    
+        // Hide modal and reset values to their initial states
+        userData={userData}
         errors={errors}
-        onHeightChange={handleHeightChange}
-        onWeightChange={handleWeightChange}
-        onGenderChange={handleGenderChange}
+        onChange={handleChange}
         onSubmitModal={handleSubmitModal}
+        activeTabKey={defaultActiveTab}
       />
- {isLoadingSubmit && (
+      {isLoadingSubmit && (
       <div style={{
         position: 'fixed', 
         top: '50%', 

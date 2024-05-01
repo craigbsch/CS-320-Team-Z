@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Layout, ViewMenuPage } from "./pages";
+import { Layout, ViewMenuPage, NutritionHistoryPage } from "./pages";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Provider } from "react-redux";
@@ -36,6 +36,10 @@ root.render(
 						<Route
 							path='viewMenu'
 							element={<ProtectedRoute component={ViewMenuPage} />}
+						/>
+						<Route 
+							path='nutritionHistory'
+							 element={<ProtectedRoute component={NutritionHistoryPage} />}
 						/>
 					</Route>
 				</Routes>

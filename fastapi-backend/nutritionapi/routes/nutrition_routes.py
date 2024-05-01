@@ -186,3 +186,40 @@ async def update_meal(meal_id: int = Path(..., title="The ID of the meal to upda
         connection.close()
 
     return {"status": "success", "message": "Meal updated successfully"}
+
+
+
+
+
+@router.get('/api/get_macronutrients')
+async def get_macronutrients(nutrient_type: str = Query(..., enum=["calories", "carbohydrates", "fat", "protein"], description="The type of macronutrient to fetch"),
+                             current_user: dict = Depends(get_token_auth_header)):
+    """
+    Fetches timestamped values of a specified macronutrient from the database for an authenticated user.
+
+    Args:
+        nutrient_type (str): The type of macronutrient to retrieve. Valid options are "calories", "carbohydrates", "fat", or "protein".
+        current_user (dict): Current user details, fetched from the authentication header.
+
+    Returns:
+        dict: A dictionary containing the user's ID, the requested nutrient type, and a list of dates and corresponding nutrient values.
+    """
+    user_id = current_user['uid']
+    connection = get_db_connection()
+    nutrient_data = []
+    try:
+        with connection.cursor() as cursor:
+            sql = f"""
+            SELECT date, {nutrient_type}
+            FROM {DATABASE_NUTRITION_TABLE}
+            WHERE user_id = %s
+            ORDER BY date
+            """
+            cursor.execute(sql, (user_id,))
+            nutrient_data = cursor.fetchall()
+    finally:
+        connection.close()
+
+    return {"user_id": user_id, "nutrient_type": nutrient_type, "nutrient_values": nutrient_data}
+
+
