@@ -1,9 +1,11 @@
 import React from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+import { Modal, Button, Form, Tab, Tabs} from 'react-bootstrap';
 import HeightForm from './HeightForm';
 import WeightForm from './WeightForm';
 import GenderForm from './GenderForm';
 import AgeForm from './AgeForm';
+import './UserModal.css'
+
 /**
  * UserModal Component
  * 
@@ -25,17 +27,40 @@ import AgeForm from './AgeForm';
  *
 */
 const UserModal = ({ showModal, onCloseModal, height, weight, age, gender, errors, onHeightChange, onWeightChange, onAgeChange, onGenderChange, onSubmitModal }) => (
-  <Modal show={showModal} onHide={onCloseModal}>
+  <Modal show={showModal} onHide={onCloseModal} centered-size="1g">
     <Modal.Header closeButton>
       <Modal.Title>User Settings</Modal.Title>
     </Modal.Header>
     <Modal.Body>
-      <Form>
-        <HeightForm value={height} onChange={onHeightChange} error={errors.height} /> 
-        <WeightForm value={weight} onChange={onWeightChange} error={errors.weight} />
-        <AgeForm value = {age} onChange = {onAgeChange} error = {errors.age} />
-        <GenderForm value={gender} onChange={onGenderChange} />
-      </Form>
+    <Tabs
+  defaultActiveKey="personal"
+  id="fill-tab-example"
+  className="mb-3"
+  fill
+  justify
+>
+        
+      <Tab eventKey="personal" title="User Metadata">
+        <Form>
+          <HeightForm value={height} onChange={onHeightChange} error={errors.height} /> 
+          <WeightForm value={weight} onChange={onWeightChange} error={errors.weight} />
+          <AgeForm value = {age} onChange = {onAgeChange} error = {errors.age} />
+          <GenderForm value={gender} onChange={onGenderChange} />
+        </Form>
+      </Tab>
+
+
+      <Tab eventKey="goals" title = "User Goals">
+
+        <Form>  
+
+
+        </Form>
+
+      </Tab>
+
+
+      </Tabs>
     </Modal.Body>
     <Modal.Footer>
       <Button variant="secondary" onClick={onCloseModal}>Close</Button>
