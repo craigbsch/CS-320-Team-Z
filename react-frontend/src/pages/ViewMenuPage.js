@@ -20,25 +20,41 @@ const ViewMenuPage = () => {
 	const [menuTime, setMenuTime] = useState("breakfast_menu");
 	const [allergens, setAllergens] = useState(new Set());
 	const [restrictions, setRestrictions] = useState(new Set()); //Can add import here for user data once setup to remember filters
+	const [mealTypes, setMealTypes] = useState([]);
 
 	//Hook to access data from the database, updates whenever the date, hall, or day variables change
 	useEffect(() => {
+		const time = new Date(
+			new Date().setDate(new Date().getDate() + day - new Date().getDay()) //Gets date +/- day of the week selected
+		)
+			.toISOString()
+			.split("T")[0];
 		axiosFASTAPI
 			.get("/menu", {
 				params: {
 					dining_hall: hall,
-					date_served: new Date(
-						new Date().setDate(new Date().getDate() + day - new Date().getDay()) //Gets date +/- day of the week selected
-					)
-						.toISOString()
-						.split("T")[0],
+					date_served: time,
 				},
 			})
 			.then((response) => {
 				dispatch(setMenu(response.data));
 			})
 			.catch((error) => {
-				console.error("Error fetching tasks:", error);
+				console.error("Error fetching meals:", error);
+			});
+
+		axiosFASTAPI
+			.get("/menu/meal_types", {
+				params: {
+					dining_hall: hall,
+					date_served: time,
+				},
+			})
+			.then((response) => {
+				setMealTypes(response.data);
+			})
+			.catch((error) => {
+				console.error("Error fetching meal types:", error);
 			});
 	}, [hall, dispatch, day]);
 
@@ -50,7 +66,11 @@ const ViewMenuPage = () => {
 			<Container className='d-flex justify-content-center align-items-center'>
 				<DiningHallSelector hall={hall} setHall={setHall} />
 				<DaySelector day={day} setDay={setDay} hall={hall} />
-				<MenuTODSelector menuTime={menuTime} setMenuTime={setMenuTime} />
+				<MenuTODSelector
+					menuTime={menuTime}
+					setMenuTime={setMenuTime}
+					mealTypes={mealTypes}
+				/>
 			</Container>
 			<Menu
 				menuTime={menuTime}
