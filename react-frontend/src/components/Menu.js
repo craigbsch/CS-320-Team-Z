@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { Table, Button } from "react-bootstrap"; // Added Button import
+import { Table, Button, Container } from "react-bootstrap";
 import { selectMenu } from "../redux/menuSlice";
 import "../styling/Menu.css";
 import RestrictionSelector from "./RestrictionSelector";
@@ -66,26 +66,14 @@ const Menu = (props) => {
 		}
 	};
 
-	const renderAllergens = (allergens) => {
-		let set = new Set();
-		allergens.forEach((allergen) => set.add(allergen));
-		if (set.size === 0) {
-			return "None";
-		}
-
-		// Convert the set to a string, with allergens separated by commas
-		return Array.from(set).join(", ");
-	};
-
-	return (
-		<div>
+	return menuTOD[props.menuTime]?.length > 0 ? (
+		<Container>
 			<Table striped bordered hover responsive>
 				<thead>
 					<tr>
 						<th>Meal Name</th>
 						<th>Calories</th>
 						<th>
-							{" "}
 							<RestrictionSelector
 								allergens={props.allergens}
 								restrictions={props.restrictions}
@@ -101,24 +89,6 @@ const Menu = (props) => {
 								<td>{item.meal_name}</td>
 								<td>{item.calories}</td>
 								<td style={{ textAlign: "right" }}>
-									<span style={{ marginRight: "8px" }}>
-										{/* Plus button */}
-										<Button
-											onClick={(e) => handleAddItem(item, e)}
-											variant='light'
-											size='sm'
-										>
-											+
-										</Button>
-									</span>
-									<span style={{ marginRight: "8px" }}>
-										{/* Display quantity */}
-										{
-											selectedItems.filter(
-												(selectedItem) => selectedItem === item
-											).length
-										}
-									</span>
 									<span>
 										{/* Minus button */}
 										<Button
@@ -132,6 +102,24 @@ const Menu = (props) => {
 											size='sm'
 										>
 											-
+										</Button>
+									</span>
+									<span style={{ marginRight: "8px" }}>
+										{/* Display quantity */}
+										{
+											selectedItems.filter(
+												(selectedItem) => selectedItem === item
+											).length
+										}
+									</span>
+									<span style={{ marginRight: "8px" }}>
+										{/* Plus button */}
+										<Button
+											onClick={(e) => handleAddItem(item, e)}
+											variant='light'
+											size='sm'
+										>
+											+
 										</Button>
 									</span>
 								</td>
@@ -161,7 +149,9 @@ const Menu = (props) => {
 					Submit
 				</Button>
 			</div>
-		</div>
+		</Container>
+	) : (
+		<Container></Container>
 	);
 };
 
