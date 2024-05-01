@@ -1,30 +1,64 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
 const SubmitMeals = (props) => {
 	const [visible, setVisibility] = useState(false);
+	const [items, setItems] = useState({}); // No types since this isn't TS
+
+	const processItems = () => {
+		const tempItems = {};
+		props.selectedItems.forEach((m) =>
+			tempItems[m.meal_name]
+				? tempItems[m.meal_name]++
+				: (tempItems[m.meal_name] = 1)
+		);
+		setItems(tempItems);
+	};
 
 	return props.selectedItems.length > 0 ? (
 		<>
 			<Button
 				size='lg'
 				className='fixed-bottom mb-3 mx-3'
-				onClick={() => setVisibility(!visible)}
+				onClick={() => {
+					processItems();
+					setVisibility(!visible);
+				}}
 			>
-				Save Changes {visible ? "hi" : "monkey"}
+				Submit
 			</Button>
 			<Modal show={visible} onHide={() => setVisibility(false)}>
 				<Modal.Header closeButton>
-					<Modal.Title>Modal heading</Modal.Title>
+					<Modal.Title>Submit meals?</Modal.Title>
 				</Modal.Header>
-				<Modal.Body>Woohoo, you are reading this text in a modal!</Modal.Body>
+				<Modal.Body>
+					<Table striped bordered hover responsive>
+						<thead>
+							<tr>
+								<th>Meal Name</th>
+								<th>Count</th>
+							</tr>
+						</thead>
+						<tbody>
+							{Object.keys(items).map((item, i) => (
+								<React.Fragment key={`item-${i}`}>
+									<tr>
+										<td>{item}</td>
+										<td>{items[item]}</td>
+									</tr>
+								</React.Fragment>
+							))}
+						</tbody>
+					</Table>
+				</Modal.Body>
 				<Modal.Footer>
-					<Button variant='secondary' onClick={() => setVisibility(false)}>
-						Close
+					<Button variant='danger' onClick={() => setVisibility(false)}>
+						Cancel
 					</Button>
-					<Button variant='primary' onClick={() => setVisibility(false)}>
-						Save Changes
+					<Button variant='success' onClick={() => setVisibility(false)}>
+						Submit
 					</Button>
 				</Modal.Footer>
 			</Modal>
