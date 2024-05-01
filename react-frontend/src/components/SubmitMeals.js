@@ -46,6 +46,7 @@ const SubmitMeals = (props) => {
 			setLoadingSubmit(false);
 			setTimeout(() => setSubmitStatus(null), 3000);
 
+			//How do I add this?
 			const refreshToken = await getAccessTokenSilently({
 				cacheMode: "off",
 				grant: "refresh_token",
