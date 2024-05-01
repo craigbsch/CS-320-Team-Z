@@ -190,6 +190,7 @@ async def update_meal(meal_id: int = Path(..., title="The ID of the meal to upda
 
 
 
+
 @router.get('/api/get_macronutrients')
 async def get_macronutrients(nutrient_type: str = Query(..., enum=["calories", "carbohydrates", "fat", "protein"], description="The type of macronutrient to fetch"),
                              current_user: dict = Depends(get_token_auth_header)):
@@ -220,3 +221,5 @@ async def get_macronutrients(nutrient_type: str = Query(..., enum=["calories", "
         connection.close()
 
     return {"user_id": user_id, "nutrient_type": nutrient_type, "nutrient_values": nutrient_data}
+
+

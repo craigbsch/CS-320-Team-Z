@@ -3,7 +3,7 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import HeightForm from './HeightForm';
 import WeightForm from './WeightForm';
 import GenderForm from './GenderForm';
-
+import AgeForm from './AgeForm';
 /**
  * UserModal Component
  * 
@@ -24,7 +24,7 @@ import GenderForm from './GenderForm';
  *  - onSubmitModal (function): called when the user submits the form.
  *
 */
-const UserModal = ({ showModal, onCloseModal, height, weight, gender, errors, onHeightChange, onWeightChange, onGenderChange, onSubmitModal }) => (
+const UserModal = ({ showModal, onCloseModal, height, weight, age, gender, errors, onHeightChange, onWeightChange, onAgeChange, onGenderChange, onSubmitModal }) => (
   <Modal show={showModal} onHide={onCloseModal}>
     <Modal.Header closeButton>
       <Modal.Title>User Settings</Modal.Title>
@@ -33,6 +33,7 @@ const UserModal = ({ showModal, onCloseModal, height, weight, gender, errors, on
       <Form>
         <HeightForm value={height} onChange={onHeightChange} error={errors.height} /> 
         <WeightForm value={weight} onChange={onWeightChange} error={errors.weight} />
+        <AgeForm value = {age} onChange = {onAgeChange} error = {errors.age} />
         <GenderForm value={gender} onChange={onGenderChange} />
       </Form>
     </Modal.Body>

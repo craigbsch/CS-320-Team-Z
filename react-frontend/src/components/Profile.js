@@ -15,6 +15,7 @@ const Profile = () => {
   const [showModal, setShowModal] = useState(false);
   const [height, setHeight] = useState(user.custom_metadata?.height || '');
   const [weight, setWeight] = useState(user.custom_metadata?.weight || '');
+  const [age, setAge] = useState(user.custom_metadata?.age || '');
   const [gender, setGender] = useState(user.custom_metadata?.gender || 'prefer_not_to_say');
   const [errors, setErrors] = useState({});
 
@@ -22,6 +23,7 @@ const Profile = () => {
   // Event handlers for form inputs
   const handleHeightChange = (e) => setHeight(e.target.value);
   const handleWeightChange = (e) => setWeight(e.target.value);
+  const handleAgeChange = (e) => setAge(e.target.value);
   const handleGenderChange = (e) => setGender(e.target.value);
   const handleLogout = () => logout({ returnTo: window.location.origin });
 
@@ -31,6 +33,7 @@ const Profile = () => {
     setHeight(user.custom_metadata?.height || '');
     setWeight(user.custom_metadata?.weight || '');
     setGender(user.custom_metadata?.gender || 'prefer_not_to_say');    
+    setAge(user.custom_metadata?.age || '');
     setShowModal(true);
 
   }
@@ -58,6 +61,12 @@ const Profile = () => {
     if (isNaN(weight) || weight < 0 || weight > 500) {
       newErrors.weight = 'Weight must be a number between 0 and 500.';
     }
+
+    if(isNaN(age) || age < 13 || age > 150){
+      newErrors.age = 'Age must be a number between 13 and 150.';
+    }
+
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -74,9 +83,10 @@ const Profile = () => {
 		const response = await axiosFASTAPI.post(
 			"/metadata/api/update_user",
 			{
-				height,
-				weight,
 				gender,
+        height,
+        age,
+        weight
 			},
 			{
 				headers: {
@@ -127,10 +137,12 @@ const Profile = () => {
         onCloseModal={handleCloseModal}
         height={height}
         weight={weight}
+        age={age}
         gender={gender}
         errors={errors}
         onHeightChange={handleHeightChange}
         onWeightChange={handleWeightChange}
+        onAgeChange={handleAgeChange}
         onGenderChange={handleGenderChange}
         onSubmitModal={handleSubmitModal}
       />
