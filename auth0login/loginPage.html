@@ -96,6 +96,17 @@
           hint: "Height must be between 1 and 100 inches"
         };
       }
+    },
+     {
+      name: "age",
+      placeholder: "Enter your age in years",
+      type: "number",
+      validator: function (age) {
+        return {
+          valid: age > 13 && age < 150,
+          hint: "Age must be between 13 and 150 years"
+        };
+      }
     }
   ]
 });
