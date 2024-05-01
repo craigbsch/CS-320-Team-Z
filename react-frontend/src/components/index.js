@@ -10,6 +10,7 @@ import MenuTODSelector from "./MenuTODSelector.js";
 import RestrictionSelector from "./RestrictionSelector.js";
 import Auth0ProviderWithRedirectCallback from "./Auth0ProviderWithRedirectCallback.js";
 import ProtectedRoute from "./ProtectedRoute.js";
+import SubmitMeals from "./SubmitMeals.js";
 
 export {
 	FoodItem,
@@ -24,4 +25,5 @@ export {
 	RestrictionSelector,
 	Auth0ProviderWithRedirectCallback,
 	ProtectedRoute,
+	SubmitMeals,
 };

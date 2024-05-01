@@ -143,12 +143,7 @@ const Menu = (props) => {
 					justifyContent: "flex-end",
 					marginTop: "20px",
 				}}
-			>
-				{/* Submit button */}
-				<Button variant='primary' size='lg'>
-					Submit
-				</Button>
-			</div>
+			></div>
 		</Container>
 	) : (
 		<Container></Container>

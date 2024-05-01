@@ -3,6 +3,7 @@ import {
 	Menu,
 	DaySelector,
 	MenuTODSelector,
+	SubmitMeals,
 } from "../components";
 import Container from "react-bootstrap/Container";
 import { useEffect, useState } from "react";
@@ -87,6 +88,7 @@ const ViewMenuPage = () => {
 				restrictions={restrictions}
 				setRestrictions={setRestrictions}
 			/>
+			<SubmitMeals />
 		</Container>
 	);
 };
