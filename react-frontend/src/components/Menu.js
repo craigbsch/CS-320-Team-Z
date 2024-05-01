@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { Table, Button } from "react-bootstrap"; // Added Button import
+import { Table, Button, Container } from "react-bootstrap"; // Added Button import
 import { selectMenu } from "../redux/menuSlice";
 import "../styling/Menu.css";
 import RestrictionSelector from "./RestrictionSelector";
@@ -77,8 +77,8 @@ const Menu = (props) => {
 		return Array.from(set).join(", ");
 	};
 
-	return (
-		<div>
+	return menuTOD[props.menuTime].length > 0 ? (
+		<Container>
 			<Table striped bordered hover responsive>
 				<thead>
 					<tr>
@@ -161,7 +161,9 @@ const Menu = (props) => {
 					Submit
 				</Button>
 			</div>
-		</div>
+		</Container>
+	) : (
+		<Container></Container>
 	);
 };
 
