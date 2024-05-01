@@ -12,6 +12,11 @@ const Profile = () => {
 
   // State management for showing the modal and storing user metadata
   const [showModal, setShowModal] = useState(false);
+
+
+
+
+
   const [height, setHeight] = useState(user.custom_metadata?.height || '');
   const [weight, setWeight] = useState(user.custom_metadata?.weight || '');
   const [age, setAge] = useState(user.custom_metadata?.age || '');
@@ -101,6 +106,12 @@ const Profile = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+
+
+
+
+
+  
   // Handle submission of the modal form, send appropriate post request
   const handleSubmitModal = async () => {
     if (!validateMetadata()) {
