@@ -57,19 +57,28 @@ const Profile = () => {
 
   // Validate user metadata before submitting
   const validateMetadata = () => {
+    const fieldSpecifications = [
+      { field: 'height', min: 0, max: 100, unit: 'Height' },
+      { field: 'weight', min: 0, max: 500, unit: 'Weight' },
+      { field: 'age', min: 13, max: 150, unit: 'Age' },
+      { field: 'calories', min: 0, max: 10000, unit: 'Calories' },
+      { field: 'carbohydrates', min: 0, max: 1000, unit: 'Carbohydrates' },
+      { field: 'protein', min: 0, max: 500, unit: 'Protein' },
+      { field: 'fat', min: 0, max: 300, unit: 'Fat' }
+    ];
+  
     let newErrors = {};
-    if (isNaN(userData.height) || userData.height === "" || userData.height < 0 || userData.height > 100) {
-      newErrors.height = 'Height must be a number between 0 and 100.';
-    }
-    if (isNaN(userData.weight) || userData.weight < 0 || userData.weight > 500) {
-      newErrors.weight = 'Weight must be a number between 0 and 500.';
-    }
-    if (isNaN(userData.age) || userData.age < 13 || userData.age > 150) {
-      newErrors.age = 'Age must be a number between 13 and 150.';
-    }
+    fieldSpecifications.forEach(({ field, min, max, unit }) => {
+      const value = userData[field];
+      if (isNaN(value) || value === "" || value < min || value > max) {
+        newErrors[field] = `${unit} must be a number between ${min} and ${max}.`;
+      }
+    });
+  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  
 
   // Handle submission of the modal form, send appropriate post request
   const handleSubmitModal = async () => {
@@ -96,7 +105,7 @@ const Profile = () => {
         }
       );
 
-      const response = await axios.post(
+      await axios.post(
         "/metadata/api/update_goals",
         {
           calories: userData.calories,
@@ -112,21 +121,15 @@ const Profile = () => {
         }
       );
 
-      console.log(response.data);
-      console.log("Old Access Token:", accessToken);
       setShowModal(false);
       setSubmitStatus({ type: 'success', message: 'Submission Successful!' });
       setLoadingSubmit(false);
 
       setTimeout(() => setSubmitStatus(null), 3000);
 
-      const refreshToken = await getAccessTokenSilently({
-        cacheMode: "off",
-        grant: "refresh_token",
-        detailedResponse: true,
-    })
-     // Fetch a new access token when modal is closed (on update), update values
-      console.log('New Access Token:', refreshToken);
+       // Fetch a new access token when modal is closed (on update), update values
+      await getAccessTokenSilently({ cacheMode: "off", grant: "refresh_token", detailedResponse: true})
+    
 
     } catch (error) {
       console.error('Error submitting user metadata:', error);

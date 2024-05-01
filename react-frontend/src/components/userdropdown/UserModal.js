@@ -3,8 +3,6 @@ import { Modal, Button, Form, Tab, Tabs } from 'react-bootstrap';
 import InputForm from './InputForm';
 import './UserModal.css';
 
-
-
 /**
  * UserModal Component
  * 
@@ -44,10 +42,10 @@ const UserModal = ({ showModal, onCloseModal, userData, errors, onChange, onSubm
         </Tab>
         <Tab eventKey="goals" title="User Goals">
           <Form>
-            <InputForm controlId="formUserCalories" label="Calories" type="number" value={userData.calories} onChange={onChange('calories')} />
-            <InputForm controlId="formUserCarbohydrates" label="Carbohydrates" type="number" value={userData.carbohydrates} onChange={onChange('carbohydrates')} />
-            <InputForm controlId="formUserProtein" label="Protein" type="number" value={userData.protein} onChange={onChange('protein')} />
-            <InputForm controlId="formUserFat" label="Fat" type="number" value={userData.fat} onChange={onChange('fat')} />
+            <InputForm controlId="formUserCalories" label="Calories" type="number" value={userData.calories} onChange={onChange('calories')} error={errors.calories} />
+            <InputForm controlId="formUserCarbohydrates" label="Carbohydrates" type="number" value={userData.carbohydrates} onChange={onChange('carbohydrates')} error={errors.carbohydrates} />
+            <InputForm controlId="formUserProtein" label="Protein" type="number" value={userData.protein} onChange={onChange('protein')} error = {errors.protein}/>
+            <InputForm controlId="formUserFat" label="Fat" type="number" value={userData.fat} onChange={onChange('fat')} error = {errors.fat}/>
           </Form>
         </Tab>
       </Tabs>
