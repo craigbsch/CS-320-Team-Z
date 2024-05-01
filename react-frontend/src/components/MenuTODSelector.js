@@ -8,8 +8,8 @@ const MenuTODSelector = (props) => {
 		breakfast_menu: "Breakfast",
 		lunch_menu: "Lunch",
 		dinner_menu: "Dinner",
-		latenight_menu: "Latenight",
-		grabngo: "Grab N' Go",
+		latenight_menu: "Late&nbsp;night",
+		grabngo: "Grab&nbsp;N'Go",
 	};
 	return (
 		<Container className='d-flex justify-content-center align-items-center'>
@@ -22,7 +22,9 @@ const MenuTODSelector = (props) => {
 				{props.mealTypes.length > 0 ? (
 					props.mealTypes.map((tod, i) => (
 						<ToggleButton id={`radio-${i}`} key={i} value={tod}>
-							{mealTypeNames[tod]}
+							<span
+								dangerouslySetInnerHTML={{ __html: mealTypeNames[tod] }}
+							></span>
 						</ToggleButton>
 					))
 				) : (
