@@ -20,13 +20,13 @@ import './UserModal.css';
 
 
 
-const UserModal = ({ showModal, onCloseModal, userData, errors, onChange, onSubmitModal }) => (
+const UserModal = ({ showModal, onCloseModal, userData, errors, onChange, onSubmitModal, activeTabKey }) => (
   <Modal show={showModal} onHide={onCloseModal}>
     <Modal.Header closeButton>
       <Modal.Title>User Settings</Modal.Title>
     </Modal.Header>
     <Modal.Body>
-      <Tabs defaultActiveKey="personal" id="fill-tab-example" className="mb-3" fill justify>
+      <Tabs defaultActiveKey={activeTabKey} id="fill-tab-example" className="mb-3" fill justify>
         <Tab eventKey="personal" title="User Metadata">
           <Form>
             <InputForm controlId="formUserHeight" label="Height" type="text" value={userData.height} onChange={onChange('height')} error={errors.height} />

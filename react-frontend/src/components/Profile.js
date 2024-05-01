@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import UserProfile from './userdropdown/UserProfile';
 import UserModal from './userdropdown/UserModal';
 import '../styling/Profile.css';
 import { Alert, Spinner } from 'react-bootstrap';
 import axios from "../api/common";
 
-const Profile = () => {
-  
+
+const Profile = ({ userComponent: UserComponent, defaultActiveTab = "personal" }) => {  
   
   // State management for showing the modal and storing user metadata
   const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0();
@@ -22,7 +21,6 @@ const Profile = () => {
     protein: '',
     fat: ''
   });
-
 
   const [errors, setErrors] = useState({});
 
@@ -151,8 +149,8 @@ const Profile = () => {
 
   return (
     <>
-      <UserProfile user={user} onShowModal={handleShowModal} onLogout={handleLogout} />
-      <UserModal
+    {UserComponent && <UserComponent user={user} onShowModal={handleShowModal} onLogout={handleLogout} />}      
+    <UserModal
         showModal={showModal}
         onCloseModal={() => setShowModal(false)}    
         // Hide modal and reset values to their initial states
@@ -160,6 +158,7 @@ const Profile = () => {
         errors={errors}
         onChange={handleChange}
         onSubmitModal={handleSubmitModal}
+        activeTabKey={defaultActiveTab}
       />
       {isLoadingSubmit && (
       <div style={{

@@ -1,7 +1,9 @@
 import React from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Profile from "./Profile";
+import UserProfile from "./userdropdown/UserProfile";
 import "../styling/Navbar.css";
+
 
 //functional component for the navigation bar
 const NavBar = () => {
@@ -14,7 +16,7 @@ const NavBar = () => {
                 </Navbar.Brand>
             </div>
             <div className="profile-container">
-                <Profile />
+                <Profile userComponent={UserProfile} />
             </div>
         </Navbar>
     );
