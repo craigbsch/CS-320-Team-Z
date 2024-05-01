@@ -1,117 +1,76 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import UserProfile from './userdropdown/UserProfile';
 import UserModal from './userdropdown/UserModal';
 import '../styling/Profile.css';
 import { Alert, Spinner } from 'react-bootstrap';
-import axiosFASTAPI from "../api/common";
+import axios from "../api/common";
 
 const Profile = () => {
-  const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0();
-
-
-  // State management for showing the modal and storing user metadata
-  const [showModal, setShowModal] = useState(false);
-
-
-
-
-
-  const [height, setHeight] = useState(user.custom_metadata?.height || '');
-  const [weight, setWeight] = useState(user.custom_metadata?.weight || '');
-  const [age, setAge] = useState(user.custom_metadata?.age || '');
-  const [gender, setGender] = useState(user.custom_metadata?.gender || 'prefer_not_to_say');
-  const [errors, setErrors] = useState({});
-
-
-
-  // State management for storing goals
-
-  const [calories, setCalories] = useState(user.custom_metadata?.goals?.calories || '');
-  const [carbohydrates, setCarbohydrates] = useState(user.custom_metadata?.goals?.carbohydrates || '');
-  const [protein, setProtein] = useState(user.custom_metadata?.goals?.protein || '');
-  const [fat, setFat] = useState(user.custom_metadata?.goals?.fat || '');
-
-
-  // Event handlers for form inputs
-  const handleHeightChange = (e) => setHeight(e.target.value);
-  const handleWeightChange = (e) => setWeight(e.target.value);
-  const handleAgeChange = (e) => setAge(e.target.value);
-  const handleGenderChange = (e) => setGender(e.target.value);
-
-
-  const handleCalorieChange = (e) => setCalories(e.target.value);
-  const handleCarbohydrateChange = (e) => setCarbohydrates(e.target.value);
-  const handleProteinChange = (e) => setProtein(e.target.value);
-  const handleFatChange = (e) => setFat(e.target.value);
-
-
-
-  const handleLogout = () => logout({ returnTo: window.location.origin });
-
-  // ensure default values are user metadata
-  const handleShowModal = () => {
-    
-    setHeight(user.custom_metadata?.height || '');
-    setWeight(user.custom_metadata?.weight || '');
-    setGender(user.custom_metadata?.gender || 'prefer_not_to_say');    
-    setAge(user.custom_metadata?.age || '');
-
-    
-
-    setCalories(user.custom_metadata?.goals?.calories || '');
-    setCarbohydrates(user.custom_metadata?.goals?.carbohydrates || '');
-    setProtein(user.custom_metadata?.goals?.protein || '');
-    setFat(user.custom_metadata?.goals?.fat || '');
-
-
-    setShowModal(true);
-
-  }
-
-
   
+  
+  // State management for showing the modal and storing user metadata
+  const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0();
+  const [showModal, setShowModal] = useState(false);
+  const [userData, setUserData] = useState({
+    height: '',
+    weight: '',
+    age: '',
+    gender: 'prefer_not_to_say',
+    calories: '',
+    carbohydrates: '',
+    protein: '',
+    fat: ''
+  });
+
+
+  const [errors, setErrors] = useState({});
 
   // States for managing alert and loading status for submission
   const [isLoadingSubmit, setLoadingSubmit] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', or null
+  const [submitStatus, setSubmitStatus] = useState(null);
+
+// Event handler for form inputs
+  const handleChange = (field) => (e) => {
+    setUserData({ ...userData, [field]: e.target.value });
+  };
+
+  const handleLogout = () => logout({ returnTo: window.location.origin });
 
 
+  const handleShowModal = () => {
+    setUserData({
+      ...userData,
+      height: user.custom_metadata?.height || '',  // Always fetch the latest info from user metadata
+      weight: user.custom_metadata?.weight || '',
+      age: user.custom_metadata?.age || '',
+      gender: user.custom_metadata?.gender || 'prefer_not_to_say',
+      calories: user.custom_metadata?.goals?.calories || '',
+      carbohydrates: user.custom_metadata?.goals?.carbohydrates || '',
+      protein: user.custom_metadata?.goals?.protein || '',
+      fat: user.custom_metadata?.goals?.fat || ''
+    });
+    setShowModal(true);
+  };
 
-  // Hide modal and reset values to their initial states
-  const handleCloseModal = () => {
-    setShowModal(false);
-  }
 
 
   // Validate user metadata before submitting
   const validateMetadata = () => {
     let newErrors = {};
-    if (isNaN(height) || height < 0 || height > 100) {
+    if (isNaN(userData.height) || userData.height === "" || userData.height < 0 || userData.height > 100) {
       newErrors.height = 'Height must be a number between 0 and 100.';
     }
-    if (isNaN(weight) || weight < 0 || weight > 500) {
+    if (isNaN(userData.weight) || userData.weight < 0 || userData.weight > 500) {
       newErrors.weight = 'Weight must be a number between 0 and 500.';
     }
-
-    if(isNaN(age) || age < 13 || age > 150){
+    if (isNaN(userData.age) || userData.age < 13 || userData.age > 150) {
       newErrors.age = 'Age must be a number between 13 and 150.';
     }
-
-
-
-
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-
-
-
-
-
-  
   // Handle submission of the modal form, send appropriate post request
   const handleSubmitModal = async () => {
     if (!validateMetadata()) {
@@ -120,37 +79,39 @@ const Profile = () => {
     setLoadingSubmit(true);
     setSubmitStatus(null);
     try {
-		const accessToken = await getAccessTokenSilently();
-    await axiosFASTAPI.post(
-			"/metadata/api/update_goals",
-			{
-				calories,
-        carbohydrates,
-        protein,
-        fat
-			},
-			{
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-					"Content-Type": "application/json",
-				},
-			}
-		);
-		const response = await axiosFASTAPI.post(
-			"/metadata/api/update_user",
-			{
-				gender,
-        height,
-        age,
-        weight
-			},
-			{
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-					"Content-Type": "application/json",
-				},
-			}
-		);
+      const accessToken = await getAccessTokenSilently();
+      await axios.post(
+        "/metadata/api/update_user",
+        {
+          gender: userData.gender,
+          height: userData.height,
+          age: userData.age,
+          weight: userData.weight
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const response = await axios.post(
+        "/metadata/api/update_goals",
+        {
+          calories: userData.calories,
+          carbohydrates: userData.carbohydrates,
+          protein: userData.protein,
+          fat: userData.fat
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       console.log(response.data);
       console.log("Old Access Token:", accessToken);
       setShowModal(false);
@@ -178,7 +139,7 @@ const Profile = () => {
   
 
   if (isLoading) {
-    return <div>Loading ...</div>; // Indicate loading status 
+    return <div>Loading...</div>; // Indicate loading status 
   }
 
   if (!isAuthenticated) {
@@ -190,33 +151,14 @@ const Profile = () => {
       <UserProfile user={user} onShowModal={handleShowModal} onLogout={handleLogout} />
       <UserModal
         showModal={showModal}
-        onCloseModal={handleCloseModal}
-        height={height}
-        weight={weight}
-        age={age}
-        gender={gender}
+        onCloseModal={() => setShowModal(false)}    
+        // Hide modal and reset values to their initial states
+        userData={userData}
         errors={errors}
-        onHeightChange={handleHeightChange}
-        onWeightChange={handleWeightChange}
-        onAgeChange={handleAgeChange}
-        onGenderChange={handleGenderChange}
-
-
-        calories={calories}
-        protein={protein}
-        fat={fat}
-        carbohydrates={carbohydrates}
-        
-        onCaloriesChange={handleCalorieChange}
-        onCarbohydratesChange={handleCarbohydrateChange}
-        onProteinChange={handleProteinChange}
-        onFatChange={handleFatChange}
-
-        //
-        
+        onChange={handleChange}
         onSubmitModal={handleSubmitModal}
       />
- {isLoadingSubmit && (
+      {isLoadingSubmit && (
       <div style={{
         position: 'fixed', 
         top: '50%', 
