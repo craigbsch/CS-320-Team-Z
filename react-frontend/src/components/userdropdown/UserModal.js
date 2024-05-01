@@ -5,6 +5,10 @@ import WeightForm from './WeightForm';
 import GenderForm from './GenderForm';
 import AgeForm from './AgeForm';
 import './UserModal.css'
+import CaloriesForm from './CaloriesForm';
+import CarbohydratesForm from './CarbohydratesForm';
+import ProteinForm from './ProteinForm';
+import FatForm from './FatForm';
 
 /**
  * UserModal Component
@@ -21,12 +25,13 @@ import './UserModal.css'
  *  - errors (object): Contains any errors related to the form inputs. Keys correspond to form names
  *                     ('height', 'weight'), and values are error messages.
  *  - onHeightChange (function): called for changes to the height input.
+ *  - onAgeChange (function): called for changes to the age input.
  *  - onWeightChange (function): called for changes to the weight input.
  *  - onGenderChange (function): called for changes to the gender selection.
  *  - onSubmitModal (function): called when the user submits the form.
  *
 */
-const UserModal = ({ showModal, onCloseModal, height, weight, age, gender, errors, onHeightChange, onWeightChange, onAgeChange, onGenderChange, onSubmitModal }) => (
+const UserModal = ({ showModal, onCloseModal, height, weight, age, gender, calories, carbohydrates, protein, fat, errors, onHeightChange, onWeightChange, onChangeGoals, onAgeChange, onGenderChange, onCaloriesChange, onCarbohydratesChange, onProteinChange, onFatChange, onSubmitModal }) => (
   <Modal show={showModal} onHide={onCloseModal} centered-size="1g">
     <Modal.Header closeButton>
       <Modal.Title>User Settings</Modal.Title>
@@ -51,12 +56,12 @@ const UserModal = ({ showModal, onCloseModal, height, weight, age, gender, error
 
 
       <Tab eventKey="goals" title = "User Goals">
-
-        <Form>  
-
-
+      <Form>
+          <CaloriesForm value={calories} onChange={onCaloriesChange}  /> 
+          <CarbohydratesForm value={carbohydrates} onChange={onCarbohydratesChange}  />
+          <ProteinForm value = {protein} onChange = {onProteinChange} />
+          <FatForm value={fat} onChange={onFatChange} />
         </Form>
-
       </Tab>
 
 

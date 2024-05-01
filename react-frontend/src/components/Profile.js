@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import UserProfile from './userdropdown/UserProfile';
 import UserModal from './userdropdown/UserModal';
-import axios from 'axios';
 import '../styling/Profile.css';
 import { Alert, Spinner } from 'react-bootstrap';
 import axiosFASTAPI from "../api/common";
@@ -20,11 +19,29 @@ const Profile = () => {
   const [errors, setErrors] = useState({});
 
 
+
+  // State management for storing goals
+
+  const [calories, setCalories] = useState(user.custom_metadata?.goals?.calories || '');
+  const [carbohydrates, setCarbohydrates] = useState(user.custom_metadata?.goals?.carbohydrates || '');
+  const [protein, setProtein] = useState(user.custom_metadata?.goals?.protein || '');
+  const [fat, setFat] = useState(user.custom_metadata?.goals?.fat || '');
+
+
   // Event handlers for form inputs
   const handleHeightChange = (e) => setHeight(e.target.value);
   const handleWeightChange = (e) => setWeight(e.target.value);
   const handleAgeChange = (e) => setAge(e.target.value);
   const handleGenderChange = (e) => setGender(e.target.value);
+
+
+  const handleCalorieChange = (e) => setCalories(e.target.value);
+  const handleCarbohydrateChange = (e) => setCarbohydrates(e.target.value);
+  const handleProteinChange = (e) => setProtein(e.target.value);
+  const handleFatChange = (e) => setFat(e.target.value);
+
+
+
   const handleLogout = () => logout({ returnTo: window.location.origin });
 
   // ensure default values are user metadata
@@ -34,9 +51,19 @@ const Profile = () => {
     setWeight(user.custom_metadata?.weight || '');
     setGender(user.custom_metadata?.gender || 'prefer_not_to_say');    
     setAge(user.custom_metadata?.age || '');
+
+    
+
+    setCalories(user.custom_metadata?.goals?.calories || '');
+    setCarbohydrates(user.custom_metadata?.goals?.calories || '');
+    setProtein(user.custom_metadata?.goals?.protein || '');
+    setFat(user.custom_metadata?.goals?.fat || '');
+
+
     setShowModal(true);
 
   }
+
 
   
 
@@ -67,6 +94,9 @@ const Profile = () => {
     }
 
 
+
+
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -80,6 +110,21 @@ const Profile = () => {
     setSubmitStatus(null);
     try {
 		const accessToken = await getAccessTokenSilently();
+    await axiosFASTAPI.post(
+			"/metadata/api/update_goals",
+			{
+				calories,
+        carbohydrates,
+        protein,
+        fat
+			},
+			{
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					"Content-Type": "application/json",
+				},
+			}
+		);
 		const response = await axiosFASTAPI.post(
 			"/metadata/api/update_user",
 			{
@@ -144,6 +189,20 @@ const Profile = () => {
         onWeightChange={handleWeightChange}
         onAgeChange={handleAgeChange}
         onGenderChange={handleGenderChange}
+
+
+        calories={calories}
+        protein={protein}
+        fat={fat}
+        carbohydrates={carbohydrates}
+        
+        onCaloriesChange={handleCalorieChange}
+        onCarbohydratesChange={handleCarbohydrateChange}
+        onProteinChange={handleProteinChange}
+        onFatChange={handleFatChange}
+
+        //
+        
         onSubmitModal={handleSubmitModal}
       />
  {isLoadingSubmit && (
