@@ -55,7 +55,7 @@ const Profile = () => {
     
 
     setCalories(user.custom_metadata?.goals?.calories || '');
-    setCarbohydrates(user.custom_metadata?.goals?.calories || '');
+    setCarbohydrates(user.custom_metadata?.goals?.carbohydrates || '');
     setProtein(user.custom_metadata?.goals?.protein || '');
     setFat(user.custom_metadata?.goals?.fat || '');
 
