@@ -68,7 +68,7 @@ const ViewMenuPage = () => {
 	}, [hall, dispatch, day]);
 
 	return (
-		<Container>
+		<Container style={{ paddingBottom: "5vh" }}>
 			<Container className='d-flex justify-content-center align-items-center'>
 				<h2>View Menus</h2>
 			</Container>
