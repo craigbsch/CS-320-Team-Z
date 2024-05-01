@@ -29,9 +29,9 @@ const UserModal = ({ showModal, onCloseModal, userData, errors, onChange, onSubm
       <Tabs defaultActiveKey={activeTabKey} id="fill-tab-example" className="mb-3" fill justify>
         <Tab eventKey="personal" title="User Metadata">
           <Form>
-            <InputForm controlId="formUserHeight" label="Height" type="text" value={userData.height} onChange={onChange('height')} error={errors.height} />
-            <InputForm controlId="formUserWeight" label="Weight" type="text" value={userData.weight} onChange={onChange('weight')} error={errors.weight} />
-            <InputForm controlId="formUserAge" label="Age" type="text" value={userData.age} onChange={onChange('age')} error={errors.age} />
+            <InputForm controlId="formUserHeight" label="Height" type="number" value={userData.height} onChange={onChange('height')} error={errors.height} />
+            <InputForm controlId="formUserWeight" label="Weight" type="number" value={userData.weight} onChange={onChange('weight')} error={errors.weight} />
+            <InputForm controlId="formUserAge" label="Age" type="number" value={userData.age} onChange={onChange('age')} error={errors.age} />
             <InputForm controlId="formUserGender" label="Gender" type="select" value={userData.gender} onChange={onChange('gender')} options={[
               { value: "prefer_not_to_say", label: "Prefer not to say" },
               { value: "other", label: "Other" },
