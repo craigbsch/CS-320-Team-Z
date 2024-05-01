@@ -26,7 +26,9 @@ const MenuTODSelector = (props) => {
 						</ToggleButton>
 					))
 				) : (
-					<ToggleButton id='tbg-radio-1'>Choose a day</ToggleButton>
+					<ToggleButton id='tbg-radio-1' disabled>
+						Choose a day
+					</ToggleButton>
 				)}
 			</ToggleButtonGroup>
 		</Container>
