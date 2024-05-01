@@ -3,7 +3,6 @@ import {
 	Menu,
 	DaySelector,
 	MenuTODSelector,
-	RestrictionSelector,
 } from "../components";
 import Container from "react-bootstrap/Container";
 import { useEffect, useState } from "react";
@@ -17,7 +16,7 @@ const ViewMenuPage = () => {
 	const date = new Date();
 	const [day, setDay] = useState(date.getDay()); //Currently selected day for viewing
 	const dispatch = useDispatch();
-	const [menuTime, setMenuTime] = useState("breakfast_menu");
+	const [menuTime, setMenuTime] = useState("");
 	const [allergens, setAllergens] = useState(new Set());
 	const [restrictions, setRestrictions] = useState(new Set()); //Can add import here for user data once setup to remember filters
 	const [mealTypes, setMealTypes] = useState([]);
@@ -52,6 +51,15 @@ const ViewMenuPage = () => {
 			})
 			.then((response) => {
 				setMealTypes(response.data);
+				if (!response.data.includes(menuTime)) {
+					setMenuTime(
+						response.data[
+							menuTime === "latenight_menu" || menuTime === "grabngo"
+								? response.data.length - 1
+								: 0
+						]
+					);
+				}
 			})
 			.catch((error) => {
 				console.error("Error fetching meal types:", error);
