@@ -11,6 +11,7 @@ import RestrictionSelector from "./RestrictionSelector.js";
 import Auth0ProviderWithRedirectCallback from "./Auth0ProviderWithRedirectCallback.js";
 import ProtectedRoute from "./ProtectedRoute.js";
 import SubmitMeals from "./SubmitMeals.js";
+import NutritionGraph from "./NutritionGraph.js";
 
 export {
 	FoodItem,
@@ -26,4 +27,5 @@ export {
 	Auth0ProviderWithRedirectCallback,
 	ProtectedRoute,
 	SubmitMeals,
+	NutritionGraph,
 };

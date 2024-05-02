@@ -65,7 +65,7 @@ async def update_goals(goals: Goals, current_user: dict = Depends(get_token_auth
     try:
         auth0 = get_auth0()
         # Update or create user goals
-        goals_dict = goals.dict()
+        goals_dict = goals.model_dump()
         print(goals_dict)
         # Fetch existing metadata if available
         existing_metadata = auth0.users.get(current_user['uid']).get('user_metadata', {})
