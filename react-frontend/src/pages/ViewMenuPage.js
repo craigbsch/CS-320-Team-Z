@@ -3,6 +3,7 @@ import {
 	Menu,
 	DaySelector,
 	MenuTODSelector,
+	SubmitMeals,
 } from "../components";
 import Container from "react-bootstrap/Container";
 import { useEffect, useState } from "react";
@@ -20,6 +21,7 @@ const ViewMenuPage = () => {
 	const [allergens, setAllergens] = useState(new Set());
 	const [restrictions, setRestrictions] = useState(new Set()); //Can add import here for user data once setup to remember filters
 	const [mealTypes, setMealTypes] = useState([]);
+	const [selectedItems, setSelectedItems] = useState([]); // State to track selected items
 
 	//Hook to access data from the database, updates whenever the date, hall, or day variables change
 	useEffect(() => {
@@ -67,7 +69,7 @@ const ViewMenuPage = () => {
 	}, [hall, dispatch, day]);
 
 	return (
-		<Container>
+		<Container style={{ paddingBottom: "5vh" }}>
 			<Container className='d-flex justify-content-center align-items-center'>
 				<h2>View Menus</h2>
 			</Container>
@@ -86,6 +88,12 @@ const ViewMenuPage = () => {
 				setAllergens={setAllergens}
 				restrictions={restrictions}
 				setRestrictions={setRestrictions}
+				selectedItems={selectedItems}
+				setSelectedItems={setSelectedItems}
+			/>
+			<SubmitMeals
+				selectedItems={selectedItems}
+				setSelectedItems={setSelectedItems}
 			/>
 		</Container>
 	);
