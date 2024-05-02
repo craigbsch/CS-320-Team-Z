@@ -53,6 +53,26 @@ const Profile = ({ userComponent: UserComponent, defaultActiveTab = "personal" }
 
 
 
+  const calculateMaintenanceCalories = () => {
+    if (userData.gender === "male" || userData.gender === "female") {
+      const { height, weight, age } = userData;
+      let bmr;
+  
+      if (userData.gender === "male") {
+        bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+      } else if (userData.gender === "female") {
+        bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+      }
+  
+      const maintenanceCalories = Math.round(bmr * 1.2); // Assuming sedentary activity level
+      setUserData(prev => ({ ...prev, calories: maintenanceCalories }));
+      setErrors(prev => ({ ...prev, maintenance: null }));
+    } else {
+      setErrors(prev => ({ ...prev, maintenance: "Please select a gender of male or female to calculate maintenance calories." }));
+    }
+  };
+
+
   // Validate user metadata before submitting
   const validateMetadata = () => {
     const fieldSpecifications = [
@@ -159,6 +179,7 @@ const Profile = ({ userComponent: UserComponent, defaultActiveTab = "personal" }
         onChange={handleChange}
         onSubmitModal={handleSubmitModal}
         activeTabKey={defaultActiveTab}
+        calculateMaintenanceCalories={calculateMaintenanceCalories}
       />
       {isLoadingSubmit && (
       <div style={{
