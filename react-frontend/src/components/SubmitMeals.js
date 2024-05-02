@@ -12,8 +12,7 @@ const SubmitMeals = (props) => {
 	const [items, setItems] = useState({});
 	const [isLoadingSubmit, setLoadingSubmit] = useState(false);
 	const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', or null
-	const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } =
-		useAuth0();
+	const { getAccessTokenSilently } = useAuth0();
 
 	const processItems = () => {
 		const tempItems = {};
