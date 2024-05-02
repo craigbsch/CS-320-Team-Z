@@ -11,7 +11,7 @@ import {
     Title,
     Tooltip,
     Legend
- } from 'chart.js';
+} from 'chart.js';
 
 ChartJS.register(
     CategoryScale,
@@ -27,9 +27,8 @@ const NutritionGraph = () => {
     const [macro, setMacro] = useState('calories');
     const [chartData, setChartData] = useState({ labels: [], datasets: [] });
     const [yAxisLabel, setYAxisLabel] = useState('');
+    const { user, getAccessTokenSilently } = useAuth0();
 
-    const { getAccessTokenSilently } = useAuth0();
-   
     const handleDropdownChange = (event) => {
         setMacro(event.target.value);
     };
@@ -51,18 +50,34 @@ const NutritionGraph = () => {
 
                 // Extracting labels and data for the chart
                 const labels = data.map(entry => entry.date);
-                const totals = data.map(entry => entry[macro]);  // Access dynamic key based on macro
-
-                // Update chart data state
-                setChartData({
-                    labels: labels,
-                    datasets: [{
+                const totals = data.map(entry => entry[nutrientType]);
+                
+                const datasets = [
+                    {
                         label: nutrientType.charAt(0).toUpperCase() + nutrientType.slice(1),
                         data: totals,
                         fill: false,
                         borderColor: 'rgb(75, 192, 192)',
                         tension: 0.1
-                    }]
+                    }
+                ];
+
+                // Check if goals exist and add a new dataset for the goal line
+                const goalValue = user.custom_metadata?.goals?.[nutrientType];
+                if (goalValue !== undefined) {
+                    datasets.push({
+                        label: `${nutrientType.charAt(0).toUpperCase() + nutrientType.slice(1)} Goal`,
+                        data: Array(labels.length).fill(goalValue),
+                        fill: false,
+                        borderColor: 'rgb(255, 99, 132)',
+                        borderDash: [5, 5] // dotted line
+                    });
+                }
+
+                // Update chart data state
+                setChartData({
+                    labels: labels,
+                    datasets: datasets
                 });
 
                 // Custom y-axis label
@@ -79,7 +94,7 @@ const NutritionGraph = () => {
         };
 
         fetchData();
-    }, [macro, getAccessTokenSilently]);
+    }, [macro, getAccessTokenSilently, user.custom_metadata?.goals]); 
 
     const options = {
         responsive: true,
