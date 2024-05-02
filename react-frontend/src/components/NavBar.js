@@ -18,6 +18,7 @@ const NavBar = () => {
             <div className="profile-container">
                 <Profile userComponent={UserProfile} />
             </div>
+            
         </Navbar>
     );
 };

@@ -45,12 +45,6 @@ const SubmitMeals = (props) => {
 			setLoadingSubmit(false);
 			setTimeout(() => setSubmitStatus(null), 3000);
 
-			//How do I add this?
-			const refreshToken = await getAccessTokenSilently({
-				cacheMode: "off",
-				grant: "refresh_token",
-				detailedResponse: true,
-			});
 		} catch (error) {
 			console.error("Error submitting user metadata:", error);
 			setSubmitStatus({ type: "danger", message: "Error submitting data!" });

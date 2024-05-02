@@ -1,8 +1,7 @@
 import React from 'react';
 import { Modal, Button, Form, Tab, Tabs, Alert } from 'react-bootstrap';
-import InputForm from './InputForm';
-import './UserModal.css';
-
+import InputForm from './InputForm'; 
+import '../../styling/UserModal.css';
 /**
  * UserModal Component
  * 
