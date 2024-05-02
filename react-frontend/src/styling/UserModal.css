@@ -1,10 +1,19 @@
 
-.nav-tabs {
+.nav-tabs { 
     display: flex !important;
     flex-direction: row !important;
+} 
 
+.nav-tabs .nav-link.active{ /* override any default nav styling */
+
+  color:black !important;
 }
 
+
+.nav-tabs .nav-link{
+
+  color:black !important;
+}
   .maintenance-button {
     margin-top: 5px;
     margin-left: 350px; /* Ensures there is some space between the input and the button */

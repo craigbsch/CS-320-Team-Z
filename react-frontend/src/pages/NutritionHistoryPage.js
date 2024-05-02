@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import Profile from "../components/Profile";
 import UpdateGoalButton from "../components/UpdateGoalButton";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -179,6 +180,8 @@ const NutritionHistoryPage = () => {
       <div>
 
       <Profile userComponent={UpdateGoalButton} defaultActiveTab="goals" />
+      
+
 
       </div>
     </div>
