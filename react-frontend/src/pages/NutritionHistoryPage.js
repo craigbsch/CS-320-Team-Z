@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import Profile from "../components/Profile";
+import NutritionGraph from "../components/NutritionGraph";
 import UpdateGoalButton from "../components/UpdateGoalButton";
 import {
   Chart as ChartJS,
@@ -147,33 +148,8 @@ const NutritionHistoryPage = () => {
       </div>
 
       {/* Right side with the bar graph */}
-      <div>
-        {/* Bar graph to display nutrition information */}
-        <div className="bar-graph">
-          <Bar
-            data={data}
-            width={400}
-            height={300}
-            options={{
-              maintainAspectRatio: false,
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  ticks: {
-                    callback: function (value) {
-                      return value;
-                    },
-                  },
-                  scaleLabel: {
-                    display: true,
-                    labelString: "Amount",
-                  },
-                },
-              },
-            }}
-          />
-        </div>
-      </div>
+      <NutritionGraph>
+      </NutritionGraph>
 
 
       <div>
