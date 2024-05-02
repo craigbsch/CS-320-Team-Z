@@ -4,3 +4,10 @@
     flex-direction: row !important;
 
 }
+
+  .maintenance-button {
+    margin-top: 5px;
+    margin-left: 350px; /* Ensures there is some space between the input and the button */
+  }
+  
+  
