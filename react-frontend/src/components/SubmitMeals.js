@@ -40,11 +40,13 @@ const SubmitMeals = (props) => {
 				}
 			);
 			console.log(response.data);
-			setVisibility(false);
 			setSubmitStatus({ type: "success", message: "Submission Successful!" });
 			setLoadingSubmit(false);
-			setTimeout(() => setSubmitStatus(null), 3000);
-
+			setTimeout(() => {
+				setSubmitStatus(null);
+				setVisibility(false);
+				props.setSelectedItems([]);
+			}, 3000);
 		} catch (error) {
 			console.error("Error submitting user metadata:", error);
 			setSubmitStatus({ type: "danger", message: "Error submitting data!" });
