@@ -1,6 +1,6 @@
-import FoodItem from "./Food_item";
+import FoodItem from "./FoodItem";
 import AutoLogin from "./AutoLogin.js";
-import MealTracker from "./Meal_tracker.js";
+import MealTracker from "./MealTracker.js";
 import NavBar from "./NavBar.js";
 import Profile from "./Profile.js";
 import DaySelector from "./DaySelector.js";
@@ -11,6 +11,7 @@ import RestrictionSelector from "./RestrictionSelector.js";
 import Auth0ProviderWithRedirectCallback from "./Auth0ProviderWithRedirectCallback.js";
 import ProtectedRoute from "./ProtectedRoute.js";
 import SubmitMeals from "./SubmitMeals.js";
+import NutritionGraph from "./NutritionGraph.js";
 
 export {
 	FoodItem,
@@ -26,4 +27,5 @@ export {
 	Auth0ProviderWithRedirectCallback,
 	ProtectedRoute,
 	SubmitMeals,
+	NutritionGraph,
 };

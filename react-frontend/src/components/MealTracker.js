@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import FoodItem from './Food_item';
+import FoodItem from './FoodItem';
 
 //can change any of this. very rough
 

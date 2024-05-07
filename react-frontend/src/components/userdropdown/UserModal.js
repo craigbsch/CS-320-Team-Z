@@ -1,8 +1,7 @@
 import React from 'react';
-import { Modal, Button, Form, Tab, Tabs } from 'react-bootstrap';
-import InputForm from './InputForm';
-import './UserModal.css';
-
+import { Modal, Button, Form, Tab, Tabs, Alert } from 'react-bootstrap';
+import InputForm from './InputForm'; 
+import '../../styling/UserModal.css';
 /**
  * UserModal Component
  * 
@@ -20,7 +19,7 @@ import './UserModal.css';
 
 
 
-const UserModal = ({ showModal, onCloseModal, userData, errors, onChange, onSubmitModal, activeTabKey }) => (
+const UserModal = ({ showModal, onCloseModal, userData, errors, onChange, onSubmitModal, activeTabKey, calculateMaintenanceCalories }) => (
   <Modal show={showModal} onHide={onCloseModal}>
     <Modal.Header closeButton>
       <Modal.Title>User Settings</Modal.Title>
@@ -43,6 +42,8 @@ const UserModal = ({ showModal, onCloseModal, userData, errors, onChange, onSubm
         <Tab eventKey="goals" title="User Goals">
           <Form>
             <InputForm controlId="formUserCalories" label="Calories" type="number" value={userData.calories} onChange={onChange('calories')} error={errors.calories} />
+            <Button variant="info" size="sm" onClick={calculateMaintenanceCalories} className ="maintenance-button">Maintenance</Button>
+            {errors.maintenance && <Alert variant="warning">{errors.maintenance}</Alert>}
             <InputForm controlId="formUserCarbohydrates" label="Carbohydrates" type="number" value={userData.carbohydrates} onChange={onChange('carbohydrates')} error={errors.carbohydrates} />
             <InputForm controlId="formUserProtein" label="Protein" type="number" value={userData.protein} onChange={onChange('protein')} error = {errors.protein}/>
             <InputForm controlId="formUserFat" label="Fat" type="number" value={userData.fat} onChange={onChange('fat')} error = {errors.fat}/>
