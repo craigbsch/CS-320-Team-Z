@@ -93,9 +93,18 @@ try:
                 date_dropdown.select_by_index(index)
 
                 # Wait for the page to load the menu for the selected date
-                WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.lightbox-nutrition a')))
+                WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, 'upcoming-foodpro')))
 
-                # Now can interact with the page, scrape content, click buttons, etc.
+                # Check if the dining hall has menu items listed for this date
+                content = driver.page_source
+                soup = BeautifulSoup(content, 'html.parser')
+                
+                # Check if any meals are listed
+                if not soup.select('.lightbox-nutrition a'):
+                    # If no 'lightbox-nutrition a' elements are found, skip this date
+                    print(f"No meals listed on {date_dropdown.first_selected_option.text.strip()} for {hall}")
+                    continue
+                
                 content = driver.page_source
 
 

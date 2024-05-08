@@ -48,8 +48,3 @@ def test_db_connection_success():
     response = client.get("/menu/testdb")
     assert response.status_code == 200
     assert response.json() == {"success": True, "result": {'1': 1}}
-
-def test_db_connection_failure():
-    # simulate a database failure here
-    # TODO
-    pass
