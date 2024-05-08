@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
 
+// Define WeightForm component
 const WeightForm = ({ value, onChange, error }) => (
   <Form.Group controlId="formUserWeight">
     <Form.Label>Weight</Form.Label>
