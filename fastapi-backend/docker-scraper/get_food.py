@@ -93,7 +93,7 @@ try:
                 date_dropdown.select_by_index(index)
 
                 # Wait for the page to load the menu for the selected date
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.lightbox-nutrition a')))
+                WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.lightbox-nutrition a')))
 
                 # Now can interact with the page, scrape content, click buttons, etc.
                 content = driver.page_source
@@ -118,6 +118,7 @@ try:
 
                         food_name = item.text.strip()
                         calories = safe_convert(item.get('data-calories'), float)
+                        serving_size = item.get('data-serving-size')
                         protein = remove_suffix(item.get('data-protein'))
                         fats = remove_suffix(item.get('data-total-fat'))
                         carbs = remove_suffix(item.get('data-total-carb'))
@@ -125,8 +126,8 @@ try:
                         meal_type = type.get('id')
 
                         # Write SQL query to insert a record into the database.
-                        sql = f"INSERT INTO {DATABASE_MEAL_TABLE} (meal_name, date_served, calories, carbohydrates, fat, protein, allergens, dining_hall, meal_type) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                        cursor.execute(sql, (food_name, formatted_date, calories, carbs, fats, protein, allergens, hall, meal_type))
+                        sql = f"INSERT INTO {DATABASE_MEAL_TABLE} (meal_name, date_served, calories, carbohydrates, fat, protein, allergens, dining_hall, meal_type, serving_size) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                        cursor.execute(sql, (food_name, formatted_date, calories, carbs, fats, protein, allergens, hall, meal_type, serving_size))
 
                     # Commit the changes after each dining hall
                     connection.commit()

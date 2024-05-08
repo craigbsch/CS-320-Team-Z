@@ -49,8 +49,8 @@ async def update_meals(meals: List[Meal], current_user: dict = Depends(get_token
         with connection.cursor() as cursor:
             for meal in meals:
                 sql = f"""
-                INSERT INTO {DATABASE_NUTRITION_TABLE} (user_id, date, meal_name, calories, carbohydrates, fat, protein, meal_type)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO {DATABASE_NUTRITION_TABLE} (user_id, date, meal_name, calories, carbohydrates, fat, protein, meal_type, serving_size)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 cursor.execute(sql, (
                     current_user['uid'],
@@ -60,7 +60,8 @@ async def update_meals(meals: List[Meal], current_user: dict = Depends(get_token
                     meal.carbohydrates,
                     meal.fat,
                     meal.protein,
-                    meal.meal_type
+                    meal.meal_type,
+                    meal.serving_size
                 ))
         connection.commit()
     finally:
@@ -94,7 +95,7 @@ async def get_meals(date: str = Query(...), current_user: dict = Depends(get_tok
     try:
         with connection.cursor() as cursor:
             sql = f"""
-            SELECT meal_id, date, meal_name, calories, carbohydrates, fat, protein, meal_type
+            SELECT meal_id, date, meal_name, calories, carbohydrates, fat, protein, meal_type, serving_size
             FROM {DATABASE_NUTRITION_TABLE}
             WHERE user_id = %s AND date = %s
             """
@@ -167,7 +168,7 @@ async def update_meal(meal_id: int = Path(..., title="The ID of the meal to upda
             # Update the meal
             update_sql = f"""
             UPDATE {DATABASE_NUTRITION_TABLE}
-            SET date = %s, meal_name = %s, calories = %s, carbohydrates = %s, fat = %s, protein = %s, meal_type = %s
+            SET date = %s, meal_name = %s, calories = %s, carbohydrates = %s, fat = %s, protein = %s, meal_type = %s, serving_size = %s
             WHERE meal_id = %s AND user_id = %s
             """
             cursor.execute(update_sql, (
@@ -178,6 +179,7 @@ async def update_meal(meal_id: int = Path(..., title="The ID of the meal to upda
                 meal.fat,
                 meal.protein,
                 meal.meal_type,
+                meal.serving_size,
                 meal_id,
                 user_id
             ))

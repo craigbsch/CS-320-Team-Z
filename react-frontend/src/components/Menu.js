@@ -129,6 +129,7 @@ const Menu = (props) => {
 										<strong>Carbohydrates:</strong> {item.carbohydrates}g<br />
 										<strong>Fat:</strong> {item.fat}g<br />
 										<strong>Protein:</strong> {item.protein}g<br />
+										<strong>Serving Size: </strong> {item.serving_size}<br />
 									</td>
 								</tr>
 							)}

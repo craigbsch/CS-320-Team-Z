@@ -12,6 +12,7 @@ class Meal(BaseModel):
     allergens: object
     dining_hall: str
     meal_type: str
+    serving_size: str
 
 
 class Metadata(BaseModel): # these are all strings due to how auth0 handles metadata from log-in
