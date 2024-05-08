@@ -14,8 +14,7 @@ import { setMenu } from "../redux/menuSlice";
 const ViewMenuPage = () => {
 	const [hall, setHall] = useState("Select hall"); //State variable for currently selected bar
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const date = new Date();
-	const [day, setDay] = useState(date.getDay()); //Currently selected day for viewing
+	const [day, setDay] = useState(new Date().toISOString().split('T')[0]); //Currently selected day for viewing
 	const dispatch = useDispatch();
 	const [menuTime, setMenuTime] = useState("");
 	const [allergens, setAllergens] = useState(new Set());
@@ -25,11 +24,8 @@ const ViewMenuPage = () => {
 
 	//Hook to access data from the database, updates whenever the date, hall, or day variables change
 	useEffect(() => {
-		const time = new Date(
-			new Date().setDate(new Date().getDate() + day - new Date().getDay()) //Gets date +/- day of the week selected
-		)
-			.toISOString()
-			.split("T")[0];
+		
+		const time = day;
 		axiosFASTAPI
 			.get("/menu", {
 				params: {
@@ -39,6 +35,7 @@ const ViewMenuPage = () => {
 			})
 			.then((response) => {
 				dispatch(setMenu(response.data));
+				console.log("Response: ", response.data);
 			})
 			.catch((error) => {
 				console.error("Error fetching meals:", error);
