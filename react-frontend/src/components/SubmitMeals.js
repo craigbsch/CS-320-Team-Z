@@ -40,19 +40,15 @@ const SubmitMeals = (props) => {
 				}
 			);
 			console.log(response.data);
+			setVisibility(false);
 			setSubmitStatus({ type: "success", message: "Submission Successful!" });
-			setLoadingSubmit(false);
-			setTimeout(() => {
-				setSubmitStatus(null);
-				setVisibility(false);
-				props.setSelectedItems([]);
-			}, 3000);
+
 		} catch (error) {
 			console.error("Error submitting user metadata:", error);
 			setSubmitStatus({ type: "danger", message: "Error submitting data!" });
-			setTimeout(() => setSubmitStatus(null), 3000);
 		} finally {
 			setLoadingSubmit(false);
+			setTimeout(() => setSubmitStatus(null), 3000); // Display the alert for 3 seconds
 		}
 	};
 
@@ -104,7 +100,18 @@ const SubmitMeals = (props) => {
 							<Spinner animation='border' variant='primary' />
 						</div>
 					)}
-					{submitStatus && (
+					
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant='secondary' onClick={() => setVisibility(false)}>
+						Cancel
+					</Button>
+					<Button variant='primary' onClick={() => submit()}>
+						Submit
+					</Button>
+				</Modal.Footer>
+			</Modal>
+			{submitStatus && (
 						<Alert
 							variant={submitStatus.type}
 							className={`custom-alert custom-alert-${submitStatus.type}`}
@@ -120,16 +127,6 @@ const SubmitMeals = (props) => {
 							{submitStatus.message}
 						</Alert>
 					)}
-				</Modal.Body>
-				<Modal.Footer>
-					<Button variant='danger' onClick={() => setVisibility(false)}>
-						Cancel
-					</Button>
-					<Button variant='success' onClick={() => submit()}>
-						Submit
-					</Button>
-				</Modal.Footer>
-			</Modal>
 		</>
 	) : (
 		<></>

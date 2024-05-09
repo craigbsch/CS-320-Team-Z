@@ -32,3 +32,13 @@
     color: white;
     margin: 0;
 }
+
+
+/* Style for back button positioning */
+.back-button {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+}
