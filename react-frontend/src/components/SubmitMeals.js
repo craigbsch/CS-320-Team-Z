@@ -7,13 +7,15 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
 
+// Define SubmitMeals component
 const SubmitMeals = (props) => {
+	// Define state variables
 	const [visible, setVisibility] = useState(false);
 	const [items, setItems] = useState({});
 	const [isLoadingSubmit, setLoadingSubmit] = useState(false);
 	const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', or null
 	const { getAccessTokenSilently } = useAuth0();
-
+	// Function to process selected meal items
 	const processItems = () => {
 		const tempItems = {};
 		props.selectedItems.forEach((m) =>
@@ -23,7 +25,7 @@ const SubmitMeals = (props) => {
 		);
 		setItems(tempItems);
 	};
-
+	// Function to submit meal items
 	const submit = async () => {
 		setLoadingSubmit(true);
 		setSubmitStatus(null);
@@ -40,10 +42,17 @@ const SubmitMeals = (props) => {
 				}
 			);
 			console.log(response.data);
+			// Update submit status, close modal, on successful submission
 			setVisibility(false);
 			setSubmitStatus({ type: "success", message: "Submission Successful!" });
-
+			setLoadingSubmit(false);
+			setTimeout(() => {
+				setSubmitStatus(null);
+				setVisibility(false);
+				props.setSelectedItems([]);
+			}, 3000);
 		} catch (error) {
+			// Handle submission error
 			console.error("Error submitting user metadata:", error);
 			setSubmitStatus({ type: "danger", message: "Error submitting data!" });
 		} finally {
@@ -51,7 +60,7 @@ const SubmitMeals = (props) => {
 			setTimeout(() => setSubmitStatus(null), 3000); // Display the alert for 3 seconds
 		}
 	};
-
+	// Render SubmitMeals component
 	return props.selectedItems.length > 0 ? (
 		<>
 			<Button

@@ -2,8 +2,11 @@ import React from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
+// Define UserProfile component
 const UserProfile = ({ user, onShowModal, onLogout }) => {
+  // Access navigate function from react-router-dom
   let navigate = useNavigate();
+  // Render UserProfile component
   return (
   <Dropdown align="end">
     <Dropdown.Toggle
