@@ -45,12 +45,6 @@ const SubmitMeals = (props) => {
 			// Update submit status, close modal, on successful submission
 			setVisibility(false);
 			setSubmitStatus({ type: "success", message: "Submission Successful!" });
-			setLoadingSubmit(false);
-			setTimeout(() => {
-				setSubmitStatus(null);
-				setVisibility(false);
-				props.setSelectedItems([]);
-			}, 3000);
 		} catch (error) {
 			// Handle submission error
 			console.error("Error submitting user metadata:", error);
