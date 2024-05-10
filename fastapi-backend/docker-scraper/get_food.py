@@ -12,142 +12,127 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from selenium.webdriver.chrome.options import Options
 
-
 # Get the path to the directory this file's parent is in
 BASEDIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
-
-# Join the path with env file
 load_dotenv(os.path.join(BASEDIR, 'dbInfoDocker.env'))
 
-# Database connection details from environment variables
-DATABASE_URL = os.getenv('DATABASE_URL')
-DATABASE_USERNAME = os.getenv('DATABASE_USERNAME')
-DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
-DATABASE_NAME = os.getenv('DATABASE_NAME')
-DATABASE_MEAL_TABLE = os.getenv('DATABASE_MEAL')
+def setup_browser():
+    """ Set up headless Chrome browser for scraping. """
+    chrome_options = Options()
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    return driver
 
-
-chrome_options = Options()
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--headless")  # don't need a GUI
-chrome_options.add_argument("--disable-dev-shm-usage")
-
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
-
-dining_halls = ['berkshire', 'worcester', 'franklin', 'hampshire']
-
-# Connect to the database
-connection = pymysql.connect(
-                            port=3306,
-                            host=DATABASE_URL,
-                             user=DATABASE_USERNAME,
-                             password=DATABASE_PASSWORD,
-                             database=DATABASE_NAME,
-                             cursorclass=pymysql.cursors.DictCursor,
-                             autocommit=True)
-
+def setup_database():
+    """ Establish database connection using environment variables. """
+    return pymysql.connect(
+        port=3306,
+        host=os.getenv('DATABASE_URL'),
+        user=os.getenv('DATABASE_USERNAME'),
+        password=os.getenv('DATABASE_PASSWORD'),
+        database=os.getenv('DATABASE_NAME'),
+        cursorclass=pymysql.cursors.DictCursor,
+        autocommit=True
+    )
 
 def convert_date(date_str):
-    # Parse date from the format like "Wed April 03, 2024"
+    """ Parse date from the format like 'Wed April 03, 2024'. """
     return datetime.strptime(date_str, "%a %B %d, %Y").date()
 
-    
 def remove_suffix(value):
-    # Check if the value ends with 'mg' and convert
-    
+    """ Remove suffix from nutritional values and convert units. """
     if value.strip().endswith('mg'):
-        # Remove 'mg' suffix and convert remaining value to grams
-        return safe_convert (value.rstrip('mg'), float) / 1000
-    
-    # Remove 'g' suffix from nutritional values
+        return safe_convert(value.rstrip('mg'), float) / 1000
     elif value.strip().endswith('g'):
-        return safe_convert (value.rstrip('g'), float) 
-    
+        return safe_convert(value.rstrip('g'), float)
     return safe_convert(value, float)
 
-def safe_convert(value, target_type, default=0): # Prevent crashing in potential edge case (i.e. not listed)
+def safe_convert(value, target_type, default=0):
+    """ Convert value to a specific type, returning default if conversion fails. """
     try:
         return target_type(value)
     except ValueError:
         return default
 
-try:
-    # Connect to DB to write data
+def parse_menu_data(driver, dining_hall):
+    """ Parse menu data from the given dining hall page. """
+    driver.implicitly_wait(15)
+    menu_data = []
+    date_dropdown = Select(driver.find_element(By.ID, 'upcoming-foodpro'))
+
+    for index in range(len(date_dropdown.options)):
+        date_dropdown.select_by_index(index)
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, 'upcoming-foodpro')))
+        content = driver.page_source
+        soup = BeautifulSoup(content, 'html.parser')
+        
+        if not soup.select('.lightbox-nutrition a'):
+            continue
+        
+        for type in soup.select('.panel-container div[role="tabpanel"]'):
+            food_items = type.select('.lightbox-nutrition a')
+            selected_date = date_dropdown.first_selected_option.text.strip()
+            formatted_date = convert_date(selected_date)
+
+            for item in food_items:
+                menu_data.append({
+                    'food_name': item.text.strip(),
+                    'calories': safe_convert(item.get('data-calories'), float),
+                    'serving_size': item.get('data-serving-size'),
+                    'protein': remove_suffix(item.get('data-protein')),
+                    'fats': remove_suffix(item.get('data-total-fat')),
+                    'carbs': remove_suffix(item.get('data-total-carb')),
+                    'allergens': item.get('data-allergens'),
+                    'meal_type': type.get('id'),
+                    'dining_hall': dining_hall,
+                    'date_served': formatted_date
+                })
+
+    return menu_data
+
+def clear_meal_info_table(connection):
+    """ Clears the meal_info table before new data is inserted. """
     with connection.cursor() as cursor:
-        # Clear the meal_info table before inserting new data (not tracking old meals)
         cursor.execute("DELETE FROM meal_info")
         connection.commit()
 
-        for hall in dining_halls:
-            driver.get(f"https://umassdining.com/locations-menus/{hall}/menu")
+def save_menu_data(connection, menu_data):
+    """ Save the parsed menu data to the database. """
+    with connection.cursor() as cursor:
+        for item in menu_data:
+            sql = "INSERT INTO meal_info (meal_name, date_served, calories, carbohydrates, fat, protein, allergens, dining_hall, meal_type, serving_size) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            cursor.execute(sql, (
+                item['food_name'], item['date_served'], item['calories'],
+                item['carbs'], item['fats'], item['protein'],
+                item['allergens'], item['dining_hall'], item['meal_type'],
+                item['serving_size']
+            ))
+        connection.commit()
 
-            # Wait for the page to load and JavaScript to execute
-            driver.implicitly_wait(15)
+def fetch_and_save_menus(driver, connection, dining_halls):
+    """ Main function to fetch and save menus for provided dining halls. """
+    # Clear the meal_info table before new data insertion
+    clear_meal_info_table(connection)
+    
+    for hall in dining_halls:
+        driver.get(f"https://umassdining.com/locations-menus/{hall}/menu")
+        menu_data = parse_menu_data(driver, hall)
+        save_menu_data(connection, menu_data)
 
-            # Select the drop-down for dates
-            date_dropdown = Select(driver.find_element(By.ID, 'upcoming-foodpro'))
+def main():
+    driver = setup_browser()
+    connection = setup_database()
 
-            # Iterate over the dates in the drop-down
-            for index in range(len(date_dropdown.options)):
-                # Select the date by index
-                date_dropdown.select_by_index(index)
+    try:
+        dining_halls = ['berkshire', 'worcester', 'franklin', 'hampshire']
+        fetch_and_save_menus(driver, connection, dining_halls)
+    finally:
+        connection.close()
+        driver.stop_client()
+        driver.close()
+        driver.quit()
 
-                # Wait for the page to load the menu for the selected date
-                WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, 'upcoming-foodpro')))
-
-                # Check if the dining hall has menu items listed for this date
-                content = driver.page_source
-                soup = BeautifulSoup(content, 'html.parser')
-                
-                # Check if any meals are listed
-                if not soup.select('.lightbox-nutrition a'):
-                    # If no 'lightbox-nutrition a' elements are found, skip this date
-                    print(f"No meals listed on {date_dropdown.first_selected_option.text.strip()} for {hall}")
-                    continue
-                
-                content = driver.page_source
-
-
-                # Parse the HTML content of the page
-                soup = BeautifulSoup(content, 'html.parser')
-
-                #select all divs with role "tabpanel" in the 'panel-control' class
-                type_id = soup.select('.panel-container div[role="tabpanel"]')
-
-                for type in type_id:
-
-                    # Select all items with the 'lightbox-nutrition' class
-                    food_items = type.select('.lightbox-nutrition a')
-                    selected_date = date_dropdown.first_selected_option.text.strip()
-                    formatted_date = convert_date(selected_date)
-
-                    for item in food_items:
-
-                        # Select all items with the 'lightbox-nutrition' class
-
-                        food_name = item.text.strip()
-                        calories = safe_convert(item.get('data-calories'), float)
-                        serving_size = item.get('data-serving-size')
-                        protein = remove_suffix(item.get('data-protein'))
-                        fats = remove_suffix(item.get('data-total-fat'))
-                        carbs = remove_suffix(item.get('data-total-carb'))
-                        allergens = item.get('data-allergens')
-                        meal_type = type.get('id')
-
-                        # Write SQL query to insert a record into the database.
-                        sql = f"INSERT INTO {DATABASE_MEAL_TABLE} (meal_name, date_served, calories, carbohydrates, fat, protein, allergens, dining_hall, meal_type, serving_size) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                        cursor.execute(sql, (food_name, formatted_date, calories, carbs, fats, protein, allergens, hall, meal_type, serving_size))
-
-                    # Commit the changes after each dining hall
-                    connection.commit()
-
-                    # Re-find the drop-down after the page updates
-                    date_dropdown = Select(driver.find_element(By.ID, 'upcoming-foodpro'))
-
-finally:
-    # Close the database connection
-    connection.close()
-    # Close the browser
-    driver.stop_client() # ensures process fully closes
-    driver.close()
-    driver.quit()
+if __name__ == "__main__":
+    main()

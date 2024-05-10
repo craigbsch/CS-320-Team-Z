@@ -7,3 +7,5 @@ webdriver-manager==4.0.1
 websockets==10.4
 wsproto==1.2.0
 python-dotenv==1.0.1
+pytest
+pytest-mock
